@@ -23,6 +23,7 @@
   --inactive: #E0E0E0;
   --border: #DFDFDF;
   --card-shadow: rgba(0, 0, 0, 0.08);
+  --card-header: #1E1E1E;
 }
 
 /* General Styles */
@@ -103,13 +104,15 @@ a:hover {
 }
 
 .card-header {
-  background-color: var(--white);
+  background-color: var(--card-header);
   border-bottom: 1px solid var(--border);
   padding: 16px 20px;
 }
 
+
 .card-body {
   padding: 20px;
+  background-color: #D9D9D9;
 }
 
 .card-footer {
