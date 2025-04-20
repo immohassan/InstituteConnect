@@ -49,6 +49,29 @@ class PostController extends Controller
         return view('posts.index', compact('posts', 'societies'));
     }
 
+    public function user_post_create(Request $req){
+        try{
+            // dd($req->all());
+            if($user = Auth::user()){
+            $post = new Post();
+            $post->user_id = $user->id;
+            $post->society_id = $req->society_id;
+            $post->content = $req->content;
+            if ($req->hasFile('attachment')) {
+                foreach ($req->file('attachment') as $file) {
+                $imagePath = $file->store('post_images', 'public');
+                $post->image = $imagePath;
+                }
+            }
+            $post->status = "active";
+            $post->save();
+            return redirect()->route('dashboard');
+        }
+        }catch(\Exception $e){
+            return "There is an error: " . $e->getMessage();
+        }
+    }
+
     /**
      * Show the form for creating a new post.
      *
@@ -169,7 +192,7 @@ class PostController extends Controller
     {
         // Check if the user is the post creator
         if (Auth::id() !== $post->user_id && !Auth::user()->isAdmin() && !Auth::user()->isSuperAdmin()) {
-            return redirect()->route('posts.index')
+            return redirect()->route('dashboard')
                 ->with('error', 'You do not have permission to edit this post.');
         }
         
@@ -192,20 +215,24 @@ class PostController extends Controller
         
         $post->content = $request->content;
         $post->society_id = $request->society_id;
-        
-        if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($post->image) {
-                Storage::disk('public')->delete($post->image);
+
+            if ($request->hasFile('attachment')) {
+                // Delete old image if exists
+                if ($post->image) {
+                    Storage::disk('public')->delete($post->image);
+                }
+                foreach ($request->file('attachment') as $file) {
+                $imagePath = $file->store('post_images', 'public');
+                $post->image = $imagePath;
+                }
             }
-            
-            $imagePath = $request->file('image')->store('post_images', 'public');
-            $post->image = $imagePath;
-        }
+            if(!$request->hasFile('attachment') && $post->image){
+                $post->image = "";
+            }
         
         $post->save();
 
-        return redirect()->route('posts.show', $post)
+        return redirect()->route('dashboard', $post)
             ->with('success', 'Post updated successfully!');
     }
 
@@ -219,23 +246,20 @@ class PostController extends Controller
     {
         // Check if the user is the post creator or an admin
         if (Auth::id() !== $post->user_id && !Auth::user()->isAdmin() && !Auth::user()->isSuperAdmin()) {
-            return redirect()->route('posts.index')
+            return redirect()->route('dashboard')
                 ->with('error', 'You do not have permission to delete this post.');
         }
-        
         // Delete image if exists
         if ($post->image) {
             Storage::disk('public')->delete($post->image);
-        }
-        
+        }  
         // Delete associated comments and likes
         $post->comments()->delete();
         $post->likes()->delete();
         
         // Delete post
         $post->delete();
-
-        return redirect()->route('posts.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Post deleted successfully!');
     }
     
