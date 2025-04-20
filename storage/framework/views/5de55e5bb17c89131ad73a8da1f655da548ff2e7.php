@@ -47,7 +47,7 @@
         <div class="col-md-6">
             <!-- Create Post -->
             <div class="card border-0 shadow-sm rounded-3 p-3 mb-4" style="max-width: 600px; margin: auto;">
-                <form method="POST" action="<?php echo e(route('posts.store')); ?>" enctype="multipart/form-data">
+                <form method="POST" action="<?php echo e(route('users_post.create')); ?>" enctype="multipart/form-data">
                     <?php echo csrf_field(); ?>
                     <textarea 
                         name="content" 
@@ -98,37 +98,133 @@
                         </div>
                         <div class="card-body">
                             <p class="card-text"><?php echo e($post->content); ?></p>
+                            <?php if($post->image): ?>
+                                <div class="mt-3">
+                                    <img src="<?php echo e(asset('storage/' . $post->image)); ?>" style="max-height: 300px; max-width: 100%; object-fit: cover; border-radius: 10px; cursor: zoom-in;"
+                                    alt="Post Image" class="img-fluid rounded mb-3" data-bs-toggle="modal"
+                                    data-bs-target="#imageModal<?php echo e($post->id); ?>">
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="imageModal<?php echo e($post->id); ?>" tabindex="-1" aria-labelledby="imageModalLabel<?php echo e($post->id); ?>" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content bg-transparent border-0">
+                                            <div class="modal-body text-center p-0">
+                                                <img src="<?php echo e(asset('storage/' . $post->image)); ?>" alt="Zoomed Image" class="img-fluid rounded">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <form action="<?php echo e(route('posts.like', $post->id)); ?>" method="POST" class="d-inline">
                                         <?php echo csrf_field(); ?>
-                                        <button type="submit" class="btn btn-sm <?php echo e($user->hasLiked($post) ? 'btn-primary' : 'btn-outline-primary'); ?>">
-                                            <i class="bi bi-heart-fill"></i> <?php echo e($post->likes->count()); ?> Likes
+                                        
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" style="border: none;">
+                                            
+                                            <i class="bi bi-heart-fill"></i> 20
                                         </button>
                                     </form>
-                                    <button class="btn btn-sm btn-outline-secondary ms-2 comment-toggle" data-post-id="<?php echo e($post->id); ?>">
-                                        <i class="bi bi-chat"></i> <?php echo e($post->comments->count()); ?> Comments
+                                    <button class="btn btn-sm btn-outline-secondary comment-toggle" data-post-id="<?php echo e($post->id); ?>" style="border: none;">
+                                        <i class="bi bi-chat"></i> <?php echo e($post->comments->count()); ?>
+
                                     </button>
                                 </div>
                                 <?php if($post->user_id === $user->id || $user->isAdmin() || $user->isSuperAdmin()): ?>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton<?php echo e($post->id); ?>" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots"></i>
+                                <div class="d-flex gap-2">
+                                    <?php if($post->user_id === $user->id): ?>
+                                        <!-- Edit Button -->
+                                        <button class="btn btn-sm btn-outline-secondary" title="Edit" data-bs-toggle="modal" data-bs-target="#editPostModal<?php echo e($post->id); ?>">
+                                            <i class="bi bi-pencil"></i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton<?php echo e($post->id); ?>">
-                                            <?php if($post->user_id === $user->id): ?>
-                                                <li><a class="dropdown-item" href="<?php echo e(route('posts.edit', $post->id)); ?>">Edit</a></li>
-                                            <?php endif; ?>
-                                            <li>
-                                                <form action="<?php echo e(route('posts.destroy', $post->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this post?');">
-                                                    <?php echo csrf_field(); ?>
-                                                    <?php echo method_field('DELETE'); ?>
-                                                    <button type="submit" class="dropdown-item text-danger">Delete</button>
-                                                </form>
-                                            </li>
-                                        </ul>
+                                    <?php endif; ?>
+                            
+                                    <!-- Delete Button -->
+                                    <button class="btn btn-sm btn-outline-danger" title="Delete" data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo e($post->id); ?>">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+                            </div>
+                        </div>
+                        <!-- Edit Modal -->
+                        <div class="modal fade" id="editPostModal<?php echo e($post->id); ?>" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-transparent border-0">
+                                <div class="modal-body p-0">
+                                <div class="card border-0 shadow-sm rounded-3 p-3 mb-4" style="max-width: 600px; margin: auto;">
+                                    <form method="POST" action="<?php echo e(route('posts.update', $post->id)); ?>" enctype="multipart/form-data">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('PUT'); ?>
+                                    <input type="hidden" name="remove_image" id="remove_image_input" value="false">
+                                    <textarea 
+                                        name="content" 
+                                        class="form-control border-0" 
+                                        rows="3" 
+                                        style="resize: none; font-size: 16px; box-shadow: none;"
+                                    ><?php echo e($post->content); ?></textarea>
+                    
+                                    
+                                    <div id="preview<?php echo e($post->id); ?>" class="mt-2 d-flex gap-2 flex-wrap">
+                                        <?php if($post->image): ?>
+                                        <div class="position-relative">
+                                            <img src="<?php echo e(asset('storage/' . $post->image)); ?>"
+                                                style="max-height: 100px; max-width: 100px; object-fit: cover; border-radius: 5px;"
+                                                class="img-thumbnail">
+                                            <button type="button"
+                                                    class="btn-close position-absolute top-0 end-0 remove-existing-image"
+                                                    data-input-id="removeImage<?php echo e($post->id); ?>"
+                                                    aria-label="Remove"></button>
+                                            <input type="hidden" name="remove_image" id="removeImage<?php echo e($post->id); ?>" value="0">
+                                        </div>
+                                        <?php endif; ?>
                                     </div>
-                                <?php endif; ?>
+                    
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <div>
+                                        <label for="attachment<?php echo e($post->id); ?>"
+                                                class="btn btn-light btn-sm rounded-pill px-3"
+                                                style="font-size: 14px; cursor: pointer;">
+                                            @ Upload
+                                        </label>
+                                        <input type="file"
+                                                name="attachment[]"
+                                                id="attachment<?php echo e($post->id); ?>"
+                                                multiple
+                                                hidden>
+                                        </div>
+                    
+                                        <button type="submit"
+                                                class="btn btn-primary rounded-pill px-4 py-1"
+                                                style="font-weight: 500;">
+                                        Update
+                                        </button>
+                                    </div>
+                                    </form>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<?php echo e($post->id); ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?php echo e($post->id); ?>" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-sm rounded-3 p-3" style="max-width: 500px; margin: auto;">
+                                    <div class="modal-body text-center">
+                                        <h5 class="mb-3">Are you sure you want to delete this post?</h5>
+                                        <p class="text-muted small mb-4">This action cannot be undone.</p>
+                                        <form action="<?php echo e(route('posts.destroy', $post->id)); ?>" method="POST">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button type="button" class="btn btn-sm btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-sm btn-danger rounded-pill px-4">Delete</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -246,50 +342,76 @@
 
 <?php $__env->startPush('scripts'); ?>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle comments
-        const commentToggles = document.querySelectorAll('.comment-toggle');
-        commentToggles.forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const postId = this.getAttribute('data-post-id');
-                const commentSection = document.getElementById(`comments-${postId}`);
-                
-                if (commentSection.style.display === 'none') {
-                    commentSection.style.display = 'block';
-                } else {
-                    commentSection.style.display = 'none';
-                }
-            });
-        });
+    $(document).ready(function () {
+    // Toggle comments
+    $('.comment-toggle').on('click', function () {
+        const postId = $(this).data('post-id');
+        $(`#comments-${postId}`).toggle();
     });
 
-    document.getElementById('attachment').addEventListener('change', function (event) {
-        const preview = document.getElementById('preview');
-        preview.innerHTML = ''; // clear old previews
-        Array.from(event.target.files).forEach(file => {
-            const fileType = file.type;
-            const reader = new FileReader();
+    // Preview for main post form
+    $('#attachment').on('change', function (e) {
+        const preview = $('#preview');
+        preview.empty();
 
+        Array.from(e.target.files).forEach(file => {
+            const reader = new FileReader();
             reader.onload = function (e) {
-                if (fileType.startsWith('image/')) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.maxWidth = '100px';
-                    img.style.maxHeight = '100px';
-                    img.className = 'rounded border';
-                    preview.appendChild(img);
+                if (file.type.startsWith('image/')) {
+                    $('<img>', {
+                        src: e.target.result,
+                        class: 'rounded border',
+                        css: { maxWidth: '100px', maxHeight: '100px' }
+                    }).appendTo(preview);
                 } else {
-                    const fileDiv = document.createElement('div');
-                    fileDiv.textContent = file.name;
-                    fileDiv.className = 'small text-muted border rounded p-1';
-                    preview.appendChild(fileDiv);
+                    $('<div>', {
+                        text: file.name,
+                        class: 'small text-muted border rounded p-1'
+                    }).appendTo(preview);
                 }
             };
-
             reader.readAsDataURL(file);
         });
     });
 
+    // Preview for edit modals (multiple attachments)
+    $('input[type="file"][id^="attachment"]').on('change', function () {
+        const postId = this.id.replace('attachment', '');
+        const preview = $(`#preview${postId}`);
+        preview.empty();
+
+        Array.from(this.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                if (file.type.startsWith('image/')) {
+                    $('<img>', {
+                        src: e.target.result,
+                        class: 'img-thumbnail',
+                        css: {
+                            maxWidth: '100px',
+                            maxHeight: '100px',
+                            objectFit: 'cover',
+                            borderRadius: '5px'
+                        }
+                    }).appendTo(preview);
+                } else {
+                    $('<div>', {
+                        text: file.name,
+                        class: 'small text-muted border rounded p-1'
+                    }).appendTo(preview);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // Remove existing image from edit modal
+    $(document).on('click', '.remove-existing-image', function () {
+        const inputId = $(this).data('input-id');
+        $(`#${inputId}`).val('1'); // Mark for deletion
+        $(this).closest('.position-relative').remove(); // Remove image block
+    });
+});
 </script>
 <?php $__env->stopPush(); ?>
 <?php $__env->stopSection(); ?>

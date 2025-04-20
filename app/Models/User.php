@@ -79,6 +79,14 @@ class User extends Authenticatable
         return $this->posts()->orderBy('created_at', 'desc')->get();
     }
     
+    // public function hasLiked(Post $post)
+    // {
+    // return $this->likes()
+    //     ->where('likeable_id', $post->id)
+    //     ->where('likeable_type', Post::class)
+    //     ->exists();
+    // }
+
     /**
      * Get the comments created by the user.
      */

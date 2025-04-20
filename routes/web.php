@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 
@@ -32,6 +33,7 @@ Route::put('/profile', [UserController::class, 'update'])->name('profile.update'
 
 // Post routes
 Route::resource('posts', 'App\Http\Controllers\PostController');
+Route::post('posts/create',[PostController::class, 'user_post_create'])->name('users_post.create');
 Route::post('/posts/{post}/like', 'App\Http\Controllers\PostController@like')->name('posts.like');
 
 // Comment routes

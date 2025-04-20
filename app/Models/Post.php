@@ -48,10 +48,10 @@ class Post extends Model
     /**
      * Get all of the likes for the post.
      */
-    public function likes()
-    {
-        return $this->morphMany(Like::class, 'likeable');
-    }
+public function likes()
+{
+    return $this->hasMany(Like::class);
+}
     
     /**
      * Get the first image path for the post.
