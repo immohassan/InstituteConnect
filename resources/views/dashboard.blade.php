@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $posts = $posts->filter(function($post) use ($user) {
+        return $post->user_id === $user->id;
+    });
+@endphp
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-3">

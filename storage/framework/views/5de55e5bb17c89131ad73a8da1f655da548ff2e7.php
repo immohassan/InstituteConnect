@@ -1,4 +1,9 @@
 <?php $__env->startSection('content'); ?>
+<?php
+    $posts = $posts->filter(function($post) use ($user) {
+        return $post->user_id === $user->id;
+    });
+?>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-3">

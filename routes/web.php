@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,8 @@ Route::resource('societies', 'App\Http\Controllers\SocietyController');
 
 // Announcement routes
 Route::resource('announcements', 'App\Http\Controllers\AnnouncementController');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
 
 // Resource center routes
 Route::get('/resources/results', 'App\Http\Controllers\ResourceController@results')->name('resources.results');
