@@ -35,14 +35,19 @@ class PostController extends Controller
         $societyIds = $user->societies->pluck('id')->toArray();
         
         // Get posts from these societies and general posts (no society_id)
-        $posts = Post::query()
-            ->with(['user', 'society', 'comments', 'likes'])
-            ->where(function($query) use ($societyIds) {
-                $query->whereIn('society_id', $societyIds)
-                      ->orWhereNull('society_id');
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        // $posts = Post::query()
+        //     ->with(['user', 'society', 'comments', 'likes'])
+        //     ->where(function($query) use ($societyIds) {
+        //         $query->whereIn('society_id', $societyIds)
+        //               ->orWhereNull('society_id');
+        //     })
+        //     ->orderBy('created_at', 'desc')
+        //     ->paginate(10);
+        $posts = Post::where(function($query) use ($societyIds) {
+                    $query->whereIn('society_id', $societyIds)
+                          ->orWhereNull('society_id');
+                })
+                ->orderBy('created_at', 'desc')->paginate(10);
         
         $societies = $user->societies;
         
