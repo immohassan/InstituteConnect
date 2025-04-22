@@ -1,0 +1,84 @@
+.body{
+    color: black !important;
+}
+.main-section{
+    width: 700px;
+    height: 100%;
+    margin-top: 50px;
+    padding: 50px;
+    background-color: #1e1e1e;
+    border-radius: 24px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #fff;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.tab-container {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    color: white;
+  }
+  
+  .tab {
+    padding: 10px 20px;
+    flex: 1;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    font-weight: 500;
+  }
+  
+  .tab::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2.5px;            /* Thin line */
+    background: #888;       /* Gray color */
+  }
+
+  .tab.active::after {
+    background: white;      /* Change color to white */
+    height: 4px;            /* Make the line thicker */
+  }
+  
+.main-heading{
+    text-align: center;
+    color: white;
+    font-size: 25px;
+}
+
+.create-post-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  transition: bottom 0.3s ease;
+}

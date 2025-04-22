@@ -88,7 +88,7 @@
     <header>
         <nav class="navbar navbar-expand-md navbar-dark">
             <div class="container">
-                <a class="navbar-brand" href="<?php echo e(url('/')); ?>">
+                <a class="navbar-brand" href="<?php echo e(route('home')); ?>">
                     Campus Connect
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="<?php echo e(__('Toggle navigation')); ?>">
@@ -99,6 +99,9 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <?php if(auth()->guard()->check()): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo e(route('home')); ?>">Explore</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo e(route('dashboard')); ?>">Dashboard</a>
                             </li>
@@ -138,7 +141,7 @@
                                     <i class="bi bi-chat fs-5"></i>
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown mt-1">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     <?php echo e(Auth::user()->name); ?>
 
