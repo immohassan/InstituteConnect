@@ -1,0 +1,71 @@
+.body{
+    color: black !important;
+}
+.main-section{
+    width: 700px;
+    height: 100%;
+    margin-top: 50px;
+    padding: 50px;
+    background-color: #1e1e1e;
+    border-radius: 24px;
+}
+
+.profile-pic{
+    margin-left: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.profile-pic span{
+    font-size: 30px;;
+}
+
+.edit-profile-btn a{
+    border: none !important;
+    width: 100%;
+}
+
+.edit-profile-btn{
+    border: 2px solid white;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.user-name{
+    font-size: 30px;
+}
+
+.user-institute{
+    color: #797979;
+}
+
+.society-member{
+    color: #797979;
+}
+
+.section-breaker{
+    border-top: 1px solid #797979;
+    margin-top: 50px;
+}
+
+.card-body{
+    background-color: #1e1e1e;
+    color: white;
+    border-bottom: 1px solid #797979;
+    padding-top: 0px !important;
+}
+
+.card-header{
+    background-color: #1e1e1e;
+    color: white;
+    border: none;
+}
+
+
+.card-text{
+    color: white;
+}
+
+.text-muted{
+    color: #797977 !important;
+}

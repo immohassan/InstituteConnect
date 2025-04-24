@@ -233,7 +233,7 @@ class PostController extends Controller
         $post->save();
 
         return redirect()->route('dashboard', $post)
-            ->with('success', 'Post updated successfully!');
+            ->with('status', 'Post updated successfully!');
     }
 
     /**
@@ -260,7 +260,7 @@ class PostController extends Controller
         // Delete post
         $post->delete();
         return redirect()->route('dashboard')
-            ->with('success', 'Post deleted successfully!');
+            ->with('status', 'Post deleted successfully!');
     }
     
     /**
