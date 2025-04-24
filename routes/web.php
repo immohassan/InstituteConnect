@@ -5,7 +5,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\SocietyController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\EventsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,8 +32,12 @@ require __DIR__.'/auth.php';
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Profile routes
-Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-Route::put('/profile', [UserController::class, 'update'])->name('profile.update');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::put('/profile/edit', [UserController::class, 'update'])->name('profile.update');
+Route::get('/profile/{id}', [ProfileController::class, 'index'])->name('profile.show');
+Route::get('/search', [SearchController::class, 'index'])->name('profile.search');
+Route::get('/search-users', [UserController::class, 'search'])->name('users.search');
+Route::get('/static-suggestions', [UserController::class, 'staticSuggestions'])->name('users.static');
 
 // Post routes
 Route::resource('posts', 'App\Http\Controllers\PostController');
@@ -45,9 +52,12 @@ Route::resource('societies', 'App\Http\Controllers\SocietyController');
 
 // Announcement routes
 Route::resource('announcements', 'App\Http\Controllers\AnnouncementController');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+//Events Routes
+Route::get('/events', [EventsController::class, 'index'])->name('events');
 // Resource center routes
-Route::get('/resources/results', 'App\Http\Controllers\ResourceController@results')->name('resources.results');
+Route::get('/resources', [ResourceController::class, 'index'])->name('resources');
 Route::get('/resources/attendance', 'App\Http\Controllers\ResourceController@attendance')->name('resources.attendance');
 
 // Subject routes
