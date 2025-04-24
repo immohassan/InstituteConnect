@@ -23,13 +23,13 @@
         body {
             font-family: 'Roboto', sans-serif;
             color: #212529;
-            background: linear-gradient(135deg, #0a66c2 0%, #0077b5 100%);
+            background: linear-gradient(135deg, black 0%, #1e1e1e 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
         .navbar {
-            background-color: transparent;
+            background-color: #1e1e1e;
             padding: 1rem 0;
         }
         .navbar-brand, .navbar-nav .nav-link {
@@ -109,8 +109,10 @@
             color: #0a66c2;
         }
         footer {
-            background-color: #ffffff;
+            background-color: #1e1e1e;
             padding: 1.5rem 0;
+            color: white;
+
         }
     </style>
 </head>
@@ -151,7 +153,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    <a class="dropdown-item" href="{{ route('profile.show',['id' => Auth::user()->id]) }}">
                                         {{ __('Profile') }}
                                     </a>
                                     
@@ -242,9 +244,9 @@
                     <p class="mb-0">&copy; {{ date('Y') }} {{ config('app.name', 'Educational Social Platform') }}. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <a href="#" class="text-decoration-none text-muted me-3">Terms of Service</a>
-                    <a href="#" class="text-decoration-none text-muted me-3">Privacy Policy</a>
-                    <a href="#" class="text-decoration-none text-muted">Contact Us</a>
+                    <a href="#" class="text-decoration-none text-white me-3">Terms of Service</a>
+                    <a href="#" class="text-decoration-none text-white me-3">Privacy Policy</a>
+                    <a href="#" class="text-decoration-none text-white">Contact Us</a>
                 </div>
             </div>
         </div>

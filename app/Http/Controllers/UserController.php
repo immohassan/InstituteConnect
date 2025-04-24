@@ -71,6 +71,65 @@ class UserController extends Controller
         
         $userModel->save();
         
-        return back()->with('status', 'Profile updated successfully.');
+        return redirect()->route('profile.show', ['id' => $user->id])->with('status', 'Profile updated successfully.');
     }
+
+    public function search(Request $request){
+    $users = User::where('name', 'like', '%' . $request->name . '%')->get();
+    $html = '';
+
+    foreach ($users as $user) {
+        $profilePicture = $user->profile_picture
+            ? asset('images/profile/' . $user->profile_picture)
+            : asset('images/blank-profile.webp');
+
+        $html .= '
+            <div class="suggestion-block mt-2 d-flex align-items-center justify-content-between p-3 rounded shadow-sm"
+                style="background-color: #1a1a1a; cursor: pointer;"
+                data-url="' . route('profile.show', ['id' => $user->id]) . '">
+                <div class="d-flex align-items-center">
+                    <img src="' . $profilePicture . '" class="rounded-circle me-3" width="48" height="48">
+                    <div>
+                        <strong class="text-white me-1">' . e($user->name) . '</strong><i class="devicon-devicon-plain" title="Developer of the App"></i><br>
+                        <small class="user-department">' . e($user->department ?? 'No Department Yet') . '</small>
+                    </div>
+                </div>
+                <button class="btn btn-outline-light btn-sm px-4">Follow</button>
+            </div>
+        ';
+    }
+
+    return response($html);
+    }
+
+    public function staticSuggestions()
+{
+    $users = User::latest()->take(10)->get(); // or however you load static suggestions
+
+    $html = '';
+
+    foreach ($users as $user) {
+        $profilePicture = $user->profile_picture
+            ? asset('images/profile/' . $user->profile_picture)
+            : asset('images/blank-profile.webp');
+
+        $html .= '
+            <div class="suggestion-block mt-2 d-flex align-items-center justify-content-between p-3 rounded shadow-sm"
+                style="background-color: #1a1a1a; cursor: pointer;"
+                data-url="' . route('profile.view', ['id' => $user->id]) . '">
+                <div class="d-flex align-items-center">
+                    <img src="' . $profilePicture . '" class="rounded-circle me-3" width="48" height="48">
+                    <div>
+                        <strong class="text-white me-1">' . e($user->name) . '</strong><i class="devicon-devicon-plain" title="Developer of the App"></i><br>
+                        <small class="user-department">' . e($user->department ?? 'No Department Yet') . '</small>
+                    </div>
+                </div>
+                <button class="btn btn-outline-light btn-sm px-4">Follow</button>
+            </div>
+        ';
+    }
+
+    return response($html);
+}
+
 }

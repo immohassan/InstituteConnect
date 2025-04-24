@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Educational Social Platform') }}</title>
+    <title>@yield('title')</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,10 +14,11 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
     
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    
+    <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
     <!-- Custom Styles -->
     <style>
         body {
@@ -47,7 +48,7 @@
         }
         .card {
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
             border: none;
         }
         .card-header {
@@ -100,16 +101,19 @@
                     <ul class="navbar-nav me-auto">
                         @auth
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('home') }}">Explore</a>
+                                <a class="nav-link" href="{{ route('home') }}">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                                <a class="nav-link" href="{{ route('profile.search') }}">Search</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Societies</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Resources</a>
+                                <a class="nav-link" href="{{ route('resources') }}">Resources</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('events') }}">Events</a>
                             </li>
                         @endauth
                     </ul>
@@ -133,12 +137,13 @@
                             <li class="nav-item">
                                 <a class="nav-link position-relative" href="#">
                                     <i class="bi bi-bell fs-5"></i>
-                                    <span class="notification-badge">3</span>
+                                    <span class="notification-badge">1</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link position-relative" href="#">
                                     <i class="bi bi-chat fs-5"></i>
+                                    <span class="notification-badge">1</span>
                                 </a>
                             </li>
                             <li class="nav-item dropdown mt-1">
@@ -147,7 +152,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    <a class="dropdown-item" href="{{ route('profile.show', ['id' => Auth::user()->id]) }}">
                                         {{ __('Profile') }}
                                     </a>
                                     
@@ -224,6 +229,7 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     
     @stack('scripts')
 </body>

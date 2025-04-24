@@ -1,12 +1,14 @@
 @extends('layouts.app')
-
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/edit-profile.css') }}">
+@endpush
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">{{ __('Edit Profile') }}</h5>
+                <div class="card-header mb-3 mt-3">
+                    <p>Edit Profile</p>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">

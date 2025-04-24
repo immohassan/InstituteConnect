@@ -50,4 +50,15 @@ class ResourceController extends Controller
 
         return view('resources.attendance', compact('subjects', 'attendances'));
     }
+
+    public function index(){
+        $user = Auth::user();
+                
+        if (!$user) {
+            return redirect()->route('login');
+        }
+        return view('resources.resources', [
+            'user' => $user
+        ]);
+    }
 }

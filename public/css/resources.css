@@ -1,0 +1,32 @@
+.body{
+    color: black !important;
+}
+.main-section{
+    width: 700px;
+    height: 100%;
+    margin-top: 50px;
+    padding: 30px 50px 50px 50px;
+    background-color: #1e1e1e;
+    border-radius: 24px;
+}
+
+.main-heading{
+    text-align: center;
+    color: white;
+    font-size: 25px;
+}
+
+.folder-card {
+    background-color: #313131;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.folder-card:hover {
+    background-color: #2a2a2a;
+}
+
+.bi-folder-fill{
+    font-size: 2rem !important;
+}

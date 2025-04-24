@@ -94,33 +94,6 @@ a:hover {
   background-color: var(--primary) !important;
 }
 
-/* Card Styling */
-.card {
-  border-radius: 8px;
-  box-shadow: 0 0 0 1px var(--border), 0 2px 5px var(--card-shadow);
-  border: none;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-
-.card-header {
-  background-color: var(--card-header);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 20px;
-}
-
-
-.card-body {
-  padding: 20px;
-  background-color: #D9D9D9;
-}
-
-.card-footer {
-  background-color: var(--white);
-  border-top: 1px solid var(--border);
-  padding: 12px 20px;
-}
-
 /* Navigation */
 .navbar {
   background-color: var(--white);
@@ -680,10 +653,6 @@ a:hover {
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-  .card-body {
-    padding: 15px;
-  }
-  
   .profile-header .profile-avatar {
     width: 100px;
     height: 100px;
@@ -724,13 +693,6 @@ a:hover {
     max-width: 85%;
   }
   
-  .card-header {
-    padding: 12px 15px;
-  }
-  
-  .card-body {
-    padding: 12px;
-  }
 }
 
 /* Dark Mode Support */
@@ -749,7 +711,7 @@ a:hover {
     --card-shadow: rgba(0, 0, 0, 0.3);
   }
   
-  .navbar, .card, .card-header, .card-footer {
+  .navbar {
     background-color: #1D1D1D;
   }
   
