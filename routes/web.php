@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\SocietyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,8 @@ Route::post('/posts/{post}/like', 'App\Http\Controllers\PostController@like')->n
 Route::resource('comments', 'App\Http\Controllers\CommentController')->only(['store', 'update', 'destroy']);
 
 // Society routes
-Route::resource('societies', 'App\Http\Controllers\SocietyController');
+// Route::resource('societies', 'App\Http\Controllers\SocietyController');
+Route::get('/societies',[SocietyController::class, 'index'])->name('societies');
 
 // Announcement routes
 Route::resource('announcements', 'App\Http\Controllers\AnnouncementController');

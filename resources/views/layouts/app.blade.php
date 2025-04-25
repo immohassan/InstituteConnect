@@ -107,7 +107,7 @@
                                 <a class="nav-link" href="{{ route('profile.search') }}">Search</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Societies</a>
+                                <a class="nav-link" href="{{ route('societies') }}">Societies</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('resources') }}">Resources</a>
@@ -163,8 +163,8 @@
                                     @endif
                                     
                                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    onclick="event.preventDefault();
+                                                    document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
