@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-    <title><?php echo e(config('app.name', 'Educational Social Platform')); ?></title>
+    <title><?php echo $__env->yieldContent('title'); ?></title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,10 +14,11 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
     
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    
+    <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
     <!-- Custom Styles -->
     <style>
         body {
@@ -47,7 +48,7 @@
         }
         .card {
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
             border: none;
         }
         .card-header {
@@ -88,7 +89,7 @@
     <header>
         <nav class="navbar navbar-expand-md navbar-dark">
             <div class="container">
-                <a class="navbar-brand" href="<?php echo e(url('/')); ?>">
+                <a class="navbar-brand" href="<?php echo e(route('home')); ?>">
                     Campus Connect
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="<?php echo e(__('Toggle navigation')); ?>">
@@ -100,13 +101,19 @@
                     <ul class="navbar-nav me-auto">
                         <?php if(auth()->guard()->check()): ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?php echo e(route('dashboard')); ?>">Dashboard</a>
+                                <a class="nav-link" href="<?php echo e(route('home')); ?>">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Societies</a>
+                                <a class="nav-link" href="<?php echo e(route('profile.search')); ?>">Search</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Resources</a>
+                                <a class="nav-link" href="<?php echo e(route('societies')); ?>">Societies</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo e(route('resources')); ?>">Resources</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo e(route('events')); ?>">Events</a>
                             </li>
                         <?php endif; ?>
                     </ul>
@@ -130,22 +137,23 @@
                             <li class="nav-item">
                                 <a class="nav-link position-relative" href="#">
                                     <i class="bi bi-bell fs-5"></i>
-                                    <span class="notification-badge">3</span>
+                                    <span class="notification-badge">1</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link position-relative" href="#">
                                     <i class="bi bi-chat fs-5"></i>
+                                    <span class="notification-badge">1</span>
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown mt-1">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     <?php echo e(Auth::user()->name); ?>
 
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">
+                                    <a class="dropdown-item" href="<?php echo e(route('profile.show', ['id' => Auth::user()->id])); ?>">
                                         <?php echo e(__('Profile')); ?>
 
                                     </a>
@@ -158,8 +166,8 @@
                                     <?php endif; ?>
                                     
                                     <a class="dropdown-item" href="<?php echo e(route('logout')); ?>"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    onclick="event.preventDefault();
+                                                    document.getElementById('logout-form').submit();">
                                         <?php echo e(__('Logout')); ?>
 
                                     </a>
@@ -227,6 +235,7 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>

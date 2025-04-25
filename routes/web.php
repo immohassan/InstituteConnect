@@ -10,6 +10,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\SocietyController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,9 @@ require __DIR__.'/auth.php';
 // Dashboard route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+//Admin routes
+Route::get('/admin', [AdminController::class, 'index'])->middleware('can:view-admin');
+
 // Profile routes
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::put('/profile/edit', [UserController::class, 'update'])->name('profile.update');
@@ -51,6 +55,8 @@ Route::resource('comments', 'App\Http\Controllers\CommentController')->only(['st
 // Society routes
 // Route::resource('societies', 'App\Http\Controllers\SocietyController');
 Route::get('/societies',[SocietyController::class, 'index'])->name('societies');
+Route::get('/society/create', [SocietyController::class, 'create'])->name('society.create');
+
 
 // Announcement routes
 Route::resource('announcements', 'App\Http\Controllers\AnnouncementController');
@@ -61,6 +67,7 @@ Route::get('/events', [EventsController::class, 'index'])->name('events');
 // Resource center routes
 Route::get('/resources', [ResourceController::class, 'index'])->name('resources');
 Route::get('/resources/attendance', 'App\Http\Controllers\ResourceController@attendance')->name('resources.attendance');
+Route::get('/resources/results', [ResourceController::class, 'results'])->name('resources.results');
 
 // Subject routes
 Route::resource('subjects', 'App\Http\Controllers\SubjectController');

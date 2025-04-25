@@ -1,0 +1,104 @@
+.body{
+    color: black !important;
+}
+.main-section{
+    width: 700px;
+    height: 100%;
+    margin-top: 50px;
+    padding: 50px;
+    background-color: #1e1e1e;
+    border-radius: 24px;
+}
+
+.society-pic{
+    margin-left: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.society-pic span{
+    font-size: 30px;;
+}
+
+.edit-society-btn a{
+    border: none !important;
+    width: 100%;
+}
+
+.edit-society-btn{
+    border: 2px solid white;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.user-name{
+    font-size: 30px;
+}
+
+.user-institute{
+    color: #797979;
+}
+
+.society-member{
+    color: #797979;
+}
+
+.section-breaker{
+    border-top: 1px solid #797979;
+    margin-top: 50px;
+}
+
+.card-body{
+    background-color: #1e1e1e;
+    color: white;
+    padding-top: 0px !important;
+}
+
+.card-header{
+    background-color: #1e1e1e;
+    color: white;
+    border: none;
+}
+
+
+.card-text{
+    color: white;
+}
+
+.text-muted{
+    color: #797977 !important;
+}
+
+.card{
+    background-color: #1e1e1e;
+}
+input{
+    background-color: #1e1e1e !important;
+    color: white !important;
+    border-color: #797979 !important; 
+}
+
+input:focus{
+    background-color: #1e1e1e !important;
+    color: white !important;
+    border-color: #797979 !important; 
+    box-shadow: none;
+}
+
+textarea{
+    background-color: #1e1e1e !important;
+    color: white !important;
+    border-color: #797979 !important; 
+}
+
+textarea:focus{
+    background-color: #1e1e1e !important;
+    color: white !important;
+    border-color: #797979 !important; 
+    box-shadow: none;
+}
+
+.card-header p{
+    text-align: center;
+    font-size: 30px;
+}

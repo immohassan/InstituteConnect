@@ -42,6 +42,12 @@ class SocietyController extends Controller
     {
         $users = User::all();
         return view('society.create', compact('users'));
+        // $user = Auth::user();
+        
+        
+        // return view('society.create', [
+        //     'user' => $user,
+        // ]);
     }
 
     /**

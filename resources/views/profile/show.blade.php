@@ -39,7 +39,7 @@
             </div>
             <div class="society-member">
                 <i class="bi bi-person"></i>
-                Secretary at Recreational & Tour Society
+                Girls' head at Sports Society
             </div>
             <div class="society-member">
                 <i class="bi bi-building-fill"></i>
