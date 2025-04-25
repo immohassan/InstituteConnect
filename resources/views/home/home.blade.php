@@ -16,7 +16,7 @@
         @foreach($posts as $post)
             <div class="card mb-4">
                 <div class="card-header">
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center profile-header" data-url="{{ route('profile.show', ['id' => $post->user->id]) }}">
                         @if($post->user->profile_picture)
                             <img src="{{ asset('images/profile/' . $post->user->profile_picture) }}" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; cursor:pointer;">
                         @else
@@ -261,6 +261,12 @@
     });
 
     $(document).ready(function () {
+
+        $(document).on('click', '.profile-header', function () {
+    const url = $(this).data('url');
+    window.location.href = url;
+});
+
     // Toggle comments
     $('.comment-toggle').on('click', function () {
         const postId = $(this).data('post-id');

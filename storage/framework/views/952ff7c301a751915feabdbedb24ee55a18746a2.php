@@ -107,7 +107,7 @@
                                 <a class="nav-link" href="<?php echo e(route('profile.search')); ?>">Search</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Societies</a>
+                                <a class="nav-link" href="<?php echo e(route('societies')); ?>">Societies</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo e(route('resources')); ?>">Resources</a>
@@ -166,8 +166,8 @@
                                     <?php endif; ?>
                                     
                                     <a class="dropdown-item" href="<?php echo e(route('logout')); ?>"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    onclick="event.preventDefault();
+                                                    document.getElementById('logout-form').submit();">
                                         <?php echo e(__('Logout')); ?>
 
                                     </a>

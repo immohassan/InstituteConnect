@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', $user->name . '\'s Profile'); ?>
 <?php $__env->startPush('styles'); ?>
 <link rel="stylesheet" href="<?php echo e(asset('css/profile.css')); ?>">
