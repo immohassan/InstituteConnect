@@ -25,7 +25,11 @@
         </div>
     </div>
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    
+    <a href="<?php echo e(route('posts.create')); ?>" class="create-post-btn btn btn-primary rounded-circle shadow" data-bs-toggle="tooltip"
+    data-bs-placement="left"
+    title="Create Post">                    
+        <i class="bi bi-plus-lg"></i>
+    </a>  
 </div>
 
 <?php $__env->startPush('scripts'); ?>

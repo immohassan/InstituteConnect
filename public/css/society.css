@@ -19,3 +19,17 @@
 .card-body{
     padding-left: 90px !important;
 }
+
+.create-post-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    transition: bottom 0.3s ease;
+}

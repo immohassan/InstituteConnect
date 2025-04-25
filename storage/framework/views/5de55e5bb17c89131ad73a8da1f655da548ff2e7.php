@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('content'); ?>
 <?php
     $posts = $posts->filter(function($post) use ($user) {

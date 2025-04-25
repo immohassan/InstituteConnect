@@ -108,11 +108,15 @@
                         <div>
                             <form action="<?php echo e(route('posts.like', $post->id)); ?>" method="POST" class="d-inline">
                                 <?php echo csrf_field(); ?>
-                                
-                                <button type="submit" class="btn btn-sm btn-outline-danger" style="border: none;">
-                                    
-                                    <i class="bi bi-heart-fill"></i> 20
-                                </button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" style="border: none;">
+                                        <?php if($post->likes->count() == 0): ?>
+                                        <i class="bi bi-heart"></i> <?php echo e($post->likes->count()); ?> Likes
+                                        <?php elseif($post->likes->contains('user_id', $post->user_id)): ?>
+                                        <i class="bi bi-heart-fill"></i> <?php echo e($post->likes->count()); ?> Likes
+                                        <?php else: ?>
+                                        <i class="bi bi-heart"></i> <?php echo e($post->likes->count()); ?> Likes
+                                        <?php endif; ?>
+                                    </button>
                             </form>
                             <button class="btn btn-sm btn-outline-secondary comment-toggle" data-post-id="<?php echo e($post->id); ?>" style="border: none;">
                                 <i class="bi bi-chat"></i> <?php echo e($post->comments->count()); ?>

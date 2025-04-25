@@ -25,7 +25,11 @@
         </div>
     </div>
     @endforeach
-    
+    <a href="{{ route('posts.create') }}" class="create-post-btn btn btn-primary rounded-circle shadow" data-bs-toggle="tooltip"
+    data-bs-placement="left"
+    title="Create Post">                    
+        <i class="bi bi-plus-lg"></i>
+    </a>  
 </div>
 
 @push('scripts')
