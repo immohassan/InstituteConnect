@@ -54,10 +54,14 @@
                         <div>
                             <form action="{{ route('posts.like', $post->id) }}" method="POST" class="d-inline">
                                 @csrf
-                                {{-- <button type="submit" class="btn btn-sm {{ $user->hasLiked($post) ? 'btn-primary' : 'btn-outline-primary' }}"> --}}
                                 <button type="submit" class="btn btn-sm btn-outline-danger" style="border: none;">
-                                    {{-- <i class="bi bi-heart-fill"></i> {{ $post->likes->count() }} Likes --}}
-                                    <i class="bi bi-heart-fill"></i> 20
+                                    @if($post->likes->count() == 0)
+                                    <i class="bi bi-heart"></i> {{ $post->likes->count() }} Likes
+                                    @elseif($post->likes->contains('user_id', $post->user_id))
+                                    <i class="bi bi-heart-fill"></i> {{ $post->likes->count() }} Likes
+                                    @else
+                                    <i class="bi bi-heart"></i> {{ $post->likes->count() }} Likes
+                                    @endif
                                 </button>
                             </form>
                             <button class="btn btn-sm btn-outline-secondary comment-toggle" data-post-id="{{ $post->id }}" style="border: none;">
