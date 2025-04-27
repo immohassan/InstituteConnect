@@ -20,6 +20,35 @@
       0 => 'Laravel\\Tinker\\TinkerServiceProvider',
     ),
   ),
+  'livewire/livewire' => 
+  array (
+    'aliases' => 
+    array (
+      'Livewire' => 'Livewire\\Livewire',
+    ),
+    'providers' => 
+    array (
+      0 => 'Livewire\\LivewireServiceProvider',
+    ),
+  ),
+  'munafio/chatify' => 
+  array (
+    'aliases' => 
+    array (
+      'Chatify' => 'Chatify\\Facades\\ChatifyMessenger',
+    ),
+    'providers' => 
+    array (
+      0 => 'Chatify\\ChatifyServiceProvider',
+    ),
+  ),
+  'namu/wirechat' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Namu\\WireChat\\WireChatServiceProvider',
+    ),
+  ),
   'nesbot/carbon' => 
   array (
     'providers' => 

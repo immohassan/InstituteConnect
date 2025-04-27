@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Resources')
+@section('title', 'Resources | Campus Connect')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/resources.css') }}">
 @endpush

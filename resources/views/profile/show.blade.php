@@ -15,11 +15,13 @@
             <!-- Info Section -->
             <div class="ms-1 col-md-6">
                 <p class="mb-1 user-name mt-4">
-                {{ $user->name }}
+                {{ $user->name }} 
                 </p>
                 <p>
-                    {{ $user->bio ?: 'No bio added yet' }}
+                    {{ $user->bio ?: 'No bio added yet' }}<br>
+                    <span style="font-size: 14px"><strong id="followers-count">{{ $user->followers }}</strong> Connections</span>
                 </p>
+                
             </div>
 
             <!-- Profile Image Placeholder -->
@@ -38,10 +40,6 @@
                 {{ $user->department ?: 'Department not set' }}
             </div>
             <div class="society-member">
-                <i class="bi bi-person"></i>
-                Secretary at Recreational & Tour Society
-            </div>
-            <div class="society-member">
                 <i class="bi bi-building-fill"></i>
                 {{ $user->semester}}@if($user->semester == 1)st
                 @elseif($user->semester == 1)nd @elseif($user->semester == 3)rd
@@ -50,15 +48,17 @@
             </div>
             <div class="edit-profile-btn">
                 @if(Auth::user()->id == $user->id)
-                <a href="{{ route('profile.edit') }}" class="btn btn-outline-light px-4" style="text-decoration: none;">
-                    Edit Profile
-                </a>
+                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-light px-4" style="text-decoration: none;">
+                        Edit Profile
+                    </a>
                 @else
-                <a href="{{ route('profile.edit') }}" class="btn btn-outline-light px-4" style="text-decoration: none;">
-                    Follow
-                </a>
+                    <button id="" 
+                            class="btn btn-outline-light px-4 follow-btn" 
+                            data-user-id="{{ $user->id }}">
+                        {{ auth()->user()->following->contains($user->id) ? 'Unfollow' : 'Follow' }}
+                    </button>
                 @endif
-            </div>
+            </div>            
             <div class="container section-breaker"></div>
         </div>
 
@@ -103,20 +103,18 @@
                         @endif
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <form action="{{ route('posts.like', $post->id) }}" method="POST" class="d-inline">
+                            @php
+                                $userLiked = $post->likes->contains('user_id', auth()->id());
+                            @endphp
+                            <form class="like-form d-inline" data-post-id="{{ $post->id }}" data-user-id="{{ Auth::user()->id }}">
                                 @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" style="border: none;">
-                                        @if($post->likes->count() == 0)
-                                        <i class="bi bi-heart"></i> {{ $post->likes->count() }} Likes
-                                        @elseif($post->likes->contains('user_id', $post->user_id))
-                                        <i class="bi bi-heart-fill"></i> {{ $post->likes->count() }} Likes
-                                        @else
-                                        <i class="bi bi-heart"></i> {{ $post->likes->count() }} Likes
-                                        @endif
-                                    </button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" style="border: none;">
+                                    <i class="bi {{ $userLiked ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+                                    <span class="like-count">{{ $post->likes->count() }}</span> Likes
+                                </button>
                             </form>
                             <button class="btn btn-sm btn-outline-secondary comment-toggle" data-post-id="{{ $post->id }}" style="border: none;">
-                                <i class="bi bi-chat"></i> {{ $post->comments->count() }}
+                                <i class="bi bi-chat"></i> <span class="comment-count" id="comment-count-{{ $post->id }}">{{ $post->comments->count() }}</span>
                             </button>
                         </div>
                         @if($post->user_id === Auth::user()->id)
@@ -219,10 +217,11 @@
                 </div>
                 
                 <!-- Comments Section (Hidden by default) -->
-                <div class="card-footer bg-white comment-section" id="comments-{{ $post->id }}" style="display: none;">
+                <div class="card-footer comment-section" id="comments-{{ $post->id }}" style="display: none;">
+                    <div id="comment-list-{{ $post->id }}">
                     @if(count($post->comments) > 0)
                         @foreach($post->comments as $comment)
-                            <div class="d-flex mb-3">
+                            <div class="d-flex mb-1">
                                 @if($comment->user->profile_picture)
                                     <img src="{{ asset('images/profile/' . $comment->user->profile_picture) }}" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
                                 @else
@@ -231,7 +230,7 @@
                                     </div>
                                 @endif
                                 <div class="flex-grow-1">
-                                    <div class="bg-light rounded-3 p-2">
+                                    <div class="text-white rounded-3 p-2">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <small class="fw-bold">{{ $comment->user->name }}</small>
                                             <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
@@ -244,9 +243,9 @@
                     @else
                         <p class="text-muted small">No comments yet.</p>
                     @endif
-                    
+                </div>
                     <!-- Comment Form -->
-                    <form action="{{ route('comments.store') }}" method="POST">
+                    <form class="comment-form" data-post-id="{{ $post->id }}">
                         @csrf
                         <input type="hidden" name="post_id" value="{{ $post->id }}">
                         <div class="d-flex">
@@ -259,7 +258,7 @@
                             @endif
                             <div class="flex-grow-1">
                                 <div class="input-group">
-                                    <input type="text" class="form-control form-control-sm" name="content" placeholder="Write a comment...">
+                                    <input type="text" class="form-control form-control-sm comment-box" name="content" placeholder="Write a comment...">
                                     <button class="btn btn-sm btn-primary" type="submit">Post</button>
                                 </div>
                             </div>
@@ -271,7 +270,7 @@
     @else
         <div class="card mb-4">
             <div class="card-body text-center py-5">
-                <p class="mb-0">No posts to show. Follow more users or join societies!</p>
+                <p class="mb-0">No posts to show.</p>
             </div>
         </div>
     @endif
@@ -280,6 +279,136 @@
 
 
 @push('scripts')
-<link href="{{ asset('js/profile.js') }}">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        // Toggle comments
+        $('.comment-toggle').on('click', function () {
+        const postId = $(this).data('post-id');
+        $(`#comments-${postId}`).toggle();
+    });
+
+    $('.follow-btn').click(function() {
+        var button = $(this);
+        var userId = button.data('user-id');
+        var isFollowing = $.trim(button.text()) === 'Unfollow';
+        var url = isFollowing ? '/unfollow/' + userId : '/follow/' + userId;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function(res) {
+                if (res.success) {
+                button.text(isFollowing ? 'Follow' : 'Unfollow');
+                var countSpan = $('#followers-count');
+                var currentCount = parseInt(countSpan.text());
+                if (isFollowing) {
+                    countSpan.text(currentCount - 1);
+                } else {
+                    countSpan.text(currentCount + 1);
+                }
+                if(res.follow){
+                $.ajax({
+                        url: "{{ route('notif.follow') }}",
+                        method: 'GET',
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        data: {
+                            contents: "Hey "+res.ReceptorUserName+"! " +res.InitiatorName+" started following you!",
+                            subscriptionIds: res.postUserSubscriptionId,
+                            url: window.location.href, // or the post URL,
+                            userId: res.ReceptorUserId,
+                            initiatorId: res.InitiatorId
+                        },
+                        success: function(notifRes) {
+                            console.log('Notification sent successfully!');
+                        },
+                        error: function() {
+                            console.error('Failed to send notification.');
+                        }
+                    });
+                }
+            }
+            },
+            error: function(xhr) {
+                console.log('Error:', xhr.responseText);
+            }
+        });
+    });
+
+    $('.like-form').on('submit', function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let postId = form.data('post-id');
+        let likeIcon = form.find('i');
+        let countSpan = form.find('.like-count');
+        let token = form.find('input[name="_token"]').val();
+
+        $.ajax({
+            url: `/posts/${postId}/toggle-like`,
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': token },
+            success: function(res) {
+                countSpan.text(res.count);
+                if (res.liked) {
+                    likeIcon.removeClass('bi-heart').addClass('bi-heart-fill');
+                } else {
+                    likeIcon.removeClass('bi-heart-fill').addClass('bi-heart');
+                }
+            }
+        });
+    });
+
+    $('.comment-form').on('submit', function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let content = form.find('input[name="content"]').val();
+        let postId = form.data('post-id');
+        let token = form.find('input[name="_token"]').val();
+        // Increment comment count
+        let countSpan = $('#comment-count-' + postId);
+        let currentCount = parseInt(countSpan.text());
+
+        $.ajax({
+            url: "{{ route('comments.store') }}",
+            method: 'POST',
+            data: {
+                _token: token,
+                content: content,
+                post_id: postId
+            },
+            success: function(res) {
+                form.find('input[name="content"]').val('');
+                // Build new comment HTML
+                let commentHTML = `
+                    <div class="d-flex mb-1">
+                        ${res.profile_picture 
+                            ? `<img src="/images/profile/${res.profile_picture}" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">`
+                            : `<div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                <span class="text-white">${res.user_name.charAt(0).toUpperCase()}</span>
+                            </div>`
+                        }
+                        <div class="flex-grow-1">
+                            <div class="text-white rounded-3 p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="fw-bold">${res.user_name}</small>
+                                    <small class="text-muted">Just now</small>
+                                </div>
+                                <p class="mb-0 small">${res.content}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                // Append the new comment
+                $('#comment-list-' + postId).prepend(commentHTML);
+                countSpan.text(currentCount + 1);
+            }
+        });
+    });
+</script>
+
 @endpush
 @endsection

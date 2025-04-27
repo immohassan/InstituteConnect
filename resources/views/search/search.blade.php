@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title','Search | Campus Connect')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/search.css') }}">
 @endpush
@@ -25,12 +26,25 @@
             <div>
                 <div class="d-flex align-items-center">
                     <strong class="text-white me-1">{{ $user->name }}</strong>
+                    @if($user->role == 'dev')
                     <i class="devicon-devicon-plain" title="Developer of the App"></i>
+                    @endif
                 </div>
                 <small class="user-department">{{ $user->department ? $user->department : "No Department Yet"}}</small>
             </div>
         </div>
-        <button class="btn btn-outline-light btn-sm px-4">Follow</button>
+
+        @if(Auth::user()->id == $user->id)
+                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-light btn-sm px-4" style="text-decoration: none;">
+                        Edit Profile
+                    </a>
+                @else
+                    <button id="" 
+                            class="btn btn-outline-light btn-sm px-4 follow-btn" 
+                            data-user-id="{{ $user->id }}">
+                        {{ auth()->user()->following->contains($user->id) ? 'Unfollow' : 'Follow' }}
+                    </button>
+                @endif
     </div>
     @endforeach
 </div>
@@ -71,6 +85,58 @@ $(document).ready(function() {
     }
 });
 
+$('.follow-btn').click(function() {
+        var button = $(this);
+        var userId = button.data('user-id');
+        var isFollowing = $.trim(button.text()) === 'Unfollow';
+        var url = isFollowing ? '/unfollow/' + userId : '/follow/' + userId;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function(res) {
+                if (res.success) {
+                // Toggle follow/unfollow text
+                button.text(isFollowing ? 'Follow' : 'Unfollow');
+
+                // Update followers count
+                var countSpan = $('#followers-count');
+                var currentCount = parseInt(countSpan.text());
+
+                if (isFollowing) {
+                    countSpan.text(currentCount - 1);
+                } else {
+                    countSpan.text(currentCount + 1);
+                }
+
+                if(res.follow){
+                $.ajax({
+                        url: "{{ route('notif.follow') }}",
+                        method: 'GET',
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                        data: {
+                            contents: "Hey "+res.ReceptorUserName+"! " +res.InitiatorName+" followed you!",
+                            subscriptionIds: res.postUserSubscriptionId,
+                            url: window.location.href // or the post URL
+                        },
+                        success: function(notifRes) {
+                            console.log('Notification sent successfully!');
+                        },
+                        error: function() {
+                            console.error('Failed to send notification.');
+                        }
+                    });
+                }
+            }
+            },
+            error: function(xhr) {
+                console.log('Error:', xhr.responseText);
+            }
+        });
+    });
 });
 </script>
 @endpush

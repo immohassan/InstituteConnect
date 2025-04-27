@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Society;
 use App\Models\Notification;
 use App\Models\Like;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -45,7 +46,7 @@ class PostController extends Controller
         //     ->paginate(10);
         $posts = Post::where(function($query) use ($societyIds) {
                     $query->whereIn('society_id', $societyIds)
-                          ->orWhereNull('society_id');
+                        ->orWhereNull('society_id');
                 })
                 ->orderBy('created_at', 'desc')->paginate(10);
         
@@ -76,6 +77,60 @@ class PostController extends Controller
             return "There is an error: " . $e->getMessage();
         }
     }
+
+    public function toggleLike(Post $post)
+{
+    $user = auth()->user();
+    $liked = $post->likes()->where('user_id', $user->id)->exists();
+
+    if ($liked) {
+        $post->likes()->where('user_id', $user->id)->delete();
+    } else {
+        $post->likes()->create(['user_id' => $user->id]);
+    }
+
+    return response()->json([
+        'liked' => !$liked,
+        'count' => $post->likes()->count(),
+        'postUserId' => $post->user->id,
+        'postUserSubscriptionId' => $post->user->subscription_token,
+        'ReceptorUserId' => $post->user->id,
+        'ReceptorUserName' => $post->user->name,
+        'InitiatorName' => Auth::user()->name,
+        'InitiatorId' => Auth::user()->id,
+    ]);
+}
+
+public function post_comment(Request $request)
+{
+    $request->validate([
+        'content' => 'required|string|max:500',
+        'post_id' => 'required|exists:posts,id',
+    ]);
+
+    $comment = Comment::create([
+        'user_id' => auth()->id(),
+        'post_id' => $request->post_id,
+        'content' => $request->content,
+    ]);
+
+    $post = Post::where('id', $request->post_id)->first();
+
+
+    return response()->json([
+        'content' => $comment->content,
+        'user_name' => auth()->user()->name,
+        'profile_picture' => auth()->user()->profile_picture,
+        'postUserId' => $post->user->id,
+        'postUserSubscriptionId' => $post->user->subscription_token,
+        'ReceptorUserId' => $post->user->id,
+        'ReceptorUserName' => $post->user->name,
+        'InitiatorName' => Auth::user()->name,
+        'InitiatorId' => Auth::user()->id,
+    ]);
+    
+}
+
 
     /**
      * Show the form for creating a new post.

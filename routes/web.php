@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\SocietyController;
+use App\Http\Controllers\NotificationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +33,9 @@ require __DIR__.'/auth.php';
 
 // Dashboard route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::post('/follow/{user}', [UserController::class, 'follow'])->name('follow');
+Route::post('/unfollow/{user}', [UserController::class, 'unfollow'])->name('unfollow');
+
 
 // Profile routes
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -43,10 +48,13 @@ Route::get('/static-suggestions', [UserController::class, 'staticSuggestions'])-
 // Post routes
 Route::resource('posts', 'App\Http\Controllers\PostController');
 Route::post('posts/create',[PostController::class, 'user_post_create'])->name('users_post.create');
-Route::post('/posts/{post}/like', 'App\Http\Controllers\PostController@like')->name('posts.like');
+// Route::post('/posts/{post}/like', 'App\Http\Controllers\PostController@like')->name('posts.like');
+Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike']);
+Route::post('/posts/post-comment', [PostController::class, 'post_comment'])->name('comments.store');
+
 
 // Comment routes
-Route::resource('comments', 'App\Http\Controllers\CommentController')->only(['store', 'update', 'destroy']);
+// Route::resource('comments', 'App\Http\Controllers\CommentController')->only(['store', 'update', 'destroy']);
 
 // Society routes
 // Route::resource('societies', 'App\Http\Controllers\SocietyController');
@@ -64,3 +72,13 @@ Route::get('/resources/attendance', 'App\Http\Controllers\ResourceController@att
 
 // Subject routes
 Route::resource('subjects', 'App\Http\Controllers\SubjectController');
+
+
+//Notifications
+Route::get('/sendNotif/like', [NotificationsController::class, 'send_like_notif'])->name('notif.like');
+Route::get('/sendNotif/comment', [NotificationsController::class, 'send_comment_notif'])->name('notif.comment');
+Route::get('/sendNotif/post', [NotificationsController::class, 'send_post_notif'])->name('notif.post');
+Route::get('/sendNotif/follow', [NotificationsController::class, 'send_follow_notif'])->name('notif.follow');
+Route::post('/save-subscription-id', [UserController::class, 'saveSubscriptionId']);
+Route::get('/get-notifications', [NotificationsController::class, 'navbarNotifications']);
+

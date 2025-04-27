@@ -55,6 +55,12 @@ class User extends Authenticatable
             ->withTimestamps();
     }
     
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'following_user_id');
+    }
+    
+
     /**
      * Get the societies that the user leads.
      */

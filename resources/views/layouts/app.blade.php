@@ -86,8 +86,8 @@
     @stack('styles')
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-md navbar-dark">
+    <header style="position: sticky">
+        <nav class="navbar navbar-expand-md navbar-dark" style="position: sticky">
             <div class="container">
                 <a class="navbar-brand" href="{{ route('home') }}">
                     Campus Connect
@@ -135,15 +135,26 @@
                             @endif
                         @else
                             <li class="nav-item">
-                                <a class="nav-link position-relative" href="#">
+                                <a class="nav-link position-relative" href="#" id="notification-bell">
                                     <i class="bi bi-bell fs-5"></i>
-                                    <span class="notification-badge">1</span>
+                                    <span class="position-absolute translate-middle bg-danger border-light rounded-circle" style="padding: 0.3rem !important; top: 17px; left: 25px; display:none;">
+                                        <span class="visually-hidden">New alerts</span>
+                                    </span>
                                 </a>
+                                
+                                <div id="notification-dropdown" class="dropdown-menu" style="display: none; position: absolute; top: 50px; right: 7%; width: 300px; min-height: 300px; max-height: 300px; overflow-y: auto;     background-color: #1e1e1e; color: white; padding-top: 15px;">
+                                    <div class="d-flex justify-content-center align-items-center mt-3">
+                                        <p id="no-notif"> No New Notifications</p>
+                                        </div>
+                                </div>
+                                
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link position-relative" href="#">
                                     <i class="bi bi-chat fs-5"></i>
-                                    <span class="notification-badge">1</span>
+                                    <span class="position-absolute translate-middle bg-danger border-light rounded-circle" style="padding: 0.3rem !important; top: 17px;left: 25px;">
+                                        <span class="visually-hidden">New alerts</span>
+                                    </span>
                                 </a>
                             </li>
                             <li class="nav-item dropdown mt-1">
@@ -229,8 +240,75 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+            appId: "7470bfe1-aaf4-4265-a2e9-9ced1732f57d",
+        });
 
-    
+        // Listen to the subscription change event
+        OneSignal.User.PushSubscription.addEventListener('change', async (event) => {
+            const subscriptionId = OneSignal.User.PushSubscription.id;
+            console.log('Subscription ID:', subscriptionId);
+
+            if (subscriptionId) {
+                // Send it to your server
+                fetch('/save-subscription-id', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        subscription_id: subscriptionId
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('Subscription ID saved successfully!');
+                    } else {
+                        console.error('Failed to save subscription ID.');
+                    }
+                });
+            }
+        });
+
+        // Optional: If already subscribed, send immediately
+        const currentId = OneSignal.User.PushSubscription.id;
+        if (currentId) {
+            console.log('Already subscribed, ID:', currentId);
+
+            fetch('/save-subscription-id', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    subscription_id: currentId
+                })
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Subscription ID saved successfully!');
+                } else {
+                    console.error('Failed to save subscription ID.');
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(document).ready(function() {
+$('#notification-bell').click(function(e) {
+    e.preventDefault();
+        $('#notification-dropdown').toggle();
+        if ($('#notification-dropdown').is(':visible')) {
+            $('#notification-bell .bg-danger').hide(); // Hide the red dot when the dropdown is open
+        }
+    });
+});
+</script>
     @stack('scripts')
 </body>
 </html>

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Home | Campus Connect')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/home-screen.css') }}">
 @endpush
@@ -52,21 +52,20 @@
                         @endif
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <form action="{{ route('posts.like', $post->id) }}" method="POST" class="d-inline">
+                            @php
+                                $userLiked = $post->likes->contains('user_id', auth()->id());
+                            @endphp
+                            <form class="like-form d-inline" data-post-id="{{ $post->id }}" data-user-id="{{ Auth::user()->id }}">
                                 @csrf
                                 <button type="submit" class="btn btn-sm btn-outline-danger" style="border: none;">
-                                    @if($post->likes->count() == 0)
-                                    <i class="bi bi-heart"></i> {{ $post->likes->count() }} Likes
-                                    @elseif($post->likes->contains('user_id', $post->user_id))
-                                    <i class="bi bi-heart-fill"></i> {{ $post->likes->count() }} Likes
-                                    @else
-                                    <i class="bi bi-heart"></i> {{ $post->likes->count() }} Likes
-                                    @endif
+                                    <i class="bi {{ $userLiked ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+                                    <span class="like-count">{{ $post->likes->count() }}</span> Likes
                                 </button>
                             </form>
                             <button class="btn btn-sm btn-outline-secondary comment-toggle" data-post-id="{{ $post->id }}" style="border: none;">
-                                <i class="bi bi-chat"></i> {{ $post->comments->count() }}
+                                <i class="bi bi-chat"></i> <span class="comment-count" id="comment-count-{{ $post->id }}">{{ $post->comments->count() }}</span>
                             </button>
+                            
                         </div>
                         @if($post->user_id === $user->id)
                         <div class="dropdown">
@@ -168,10 +167,11 @@
                 </div>
                 
                 <!-- Comments Section (Hidden by default) -->
-                <div class="card-footer bg-white comment-section" id="comments-{{ $post->id }}" style="display: none;">
+                <div class="card-footer comment-section" id="comments-{{ $post->id }}" style="display: none;">
+                    <div id="comment-list-{{ $post->id }}">
                     @if(count($post->comments) > 0)
                         @foreach($post->comments as $comment)
-                            <div class="d-flex mb-3">
+                            <div class="d-flex mb-1">
                                 @if($comment->user->profile_picture)
                                     <img src="{{ asset('images/profile/' . $comment->user->profile_picture) }}" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
                                 @else
@@ -180,7 +180,7 @@
                                     </div>
                                 @endif
                                 <div class="flex-grow-1">
-                                    <div class="bg-light rounded-3 p-2">
+                                    <div class="text-white rounded-3 p-2">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <small class="fw-bold">{{ $comment->user->name }}</small>
                                             <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
@@ -193,9 +193,10 @@
                     @else
                         <p class="text-muted small">No comments yet.</p>
                     @endif
+                </div>
                     
                     <!-- Comment Form -->
-                    <form action="{{ route('comments.store') }}" method="POST">
+                    <form class="comment-form" data-post-id="{{ $post->id }}">
                         @csrf
                         <input type="hidden" name="post_id" value="{{ $post->id }}">
                         <div class="d-flex">
@@ -208,7 +209,7 @@
                             @endif
                             <div class="flex-grow-1">
                                 <div class="input-group">
-                                    <input type="text" class="form-control form-control-sm" name="content" placeholder="Write a comment...">
+                                    <input type="text" class="form-control form-control-sm comment-box" name="content" placeholder="Write a comment...">
                                     <button class="btn btn-sm btn-primary" type="submit">Post</button>
                                 </div>
                             </div>
@@ -225,13 +226,16 @@
                 </div>
             @endif
         </div>
-        <a href="{{ route('posts.create') }}" class="create-post-btn btn btn-primary rounded-circle shadow" data-bs-toggle="tooltip"
+        <a href="#" 
+        class="create-post-btn btn btn-primary rounded-circle shadow" 
+        data-bs-toggle="modal" 
+        data-bs-target="#createPostModal"
         data-bs-placement="left"
-        title="Create Post">                    
-            <i class="bi bi-plus-lg"></i>
-        </a>        
+        title="Create Post">
+        <i class="bi bi-plus-lg"></i>
+    </a>            
 </div>
-
+@include('posts.create')
 <div class="d-flex justify-content-center align-items-center mt-3">
 <div class="spinner-border text-light text-center" id="load-more-spinner" role="status" style="display: none">
     <span class="visually-hidden">Loading...</span>
@@ -242,6 +246,40 @@
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
+function loadNotifications() {
+    $('#no-notif').show();
+    $.ajax({
+        url: '/get-notifications', // Adjust to the URL that fetches notifications
+        method: 'GET',
+        success: function(data) {
+            if (data.length > 0) {
+                let notificationsHtml = '';
+                data.forEach(function(notification) {
+                    notificationsHtml += `
+                        <div class="notification-item d-flex align-items-center" style="padding: 5px 12px; font-size: 14px; padding-bottom: 0px !important;">
+                            <img src="/images/blank-profile.webp" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                            <p class="mb-0 me-2">${notification.content}</p>
+                        </div>
+                        <small style="padding: 0px 0px 0px 50px; color:#d9d9d9">${notification.formatted_created_at}</small>
+                    `;
+                });
+
+                $('#notification-dropdown').html(notificationsHtml);
+                $('#notification-bell .bg-danger').show(); // Show the red dot if there are new notifications
+
+            } else {
+                $('#notification-dropdown').html('<p>No new notifications</p>');
+                $('#notification-bell .bg-danger').hide(); // Hide the red dot if no new notifications
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching notifications:', error);
+            $('#notification-dropdown').html('<p>Error loading notifications</p>');
+        }
+    });
+}
+
     let page = 1;
     let loading = false;
 
@@ -271,6 +309,72 @@
     window.location.href = url;
 });
 
+$('.comment-form').on('submit', function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let content = form.find('input[name="content"]').val();
+        let postId = form.data('post-id');
+        let token = form.find('input[name="_token"]').val();
+        // Increment comment count
+        let countSpan = $('#comment-count-' + postId);
+        let currentCount = parseInt(countSpan.text());
+
+        $.ajax({
+            url: "{{ route('comments.store') }}",
+            method: 'POST',
+            data: {
+                _token: token,
+                content: content,
+                post_id: postId
+            },
+            success: function(res) {
+                form.find('input[name="content"]').val('');
+                // Build new comment HTML
+                let commentHTML = `
+                    <div class="d-flex mb-1">
+                        ${res.profile_picture 
+                            ? `<img src="/images/profile/${res.profile_picture}" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">`
+                            : `<div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                <span class="text-white">${res.user_name.charAt(0).toUpperCase()}</span>
+                            </div>`
+                        }
+                        <div class="flex-grow-1">
+                            <div class="text-white rounded-3 p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="fw-bold">${res.user_name}</small>
+                                    <small class="text-muted">Just now</small>
+                                </div>
+                                <p class="mb-0 small">${res.content}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                // Append the new comment
+                $('#comment-list-' + postId).prepend(commentHTML);
+                countSpan.text(currentCount + 1);
+                    $.ajax({
+                        url: "{{ route('notif.comment') }}",
+                        method: 'GET',
+                        headers: { 'X-CSRF-TOKEN': token },
+                        data: {
+                            contents: "Hey "+res.ReceptorUserName+"! " +res.InitiatorName+" commented on your post!",
+                            subscriptionIds: res.postUserSubscriptionId,
+                            url: window.location.href, // or the post URL
+                            userId: res.ReceptorUserId,
+                            initiatorId: res.InitiatorId
+                        },
+                        success: function(notifRes) {
+                            console.log('Notification sent successfully!');
+                            loadNotifications();
+                        },
+                        error: function() {
+                            console.error('Failed to send notification.');
+                        }
+                    });
+                }
+        });
+    });
     // Toggle comments
     $('.comment-toggle').on('click', function () {
         const postId = $(this).data('post-id');
@@ -355,6 +459,54 @@
         }
     });
     $('[data-bs-toggle="tooltip"]').tooltip();
+
+    $('.like-form').on('submit', function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let postId = form.data('post-id');
+        let likeIcon = form.find('i');
+        let countSpan = form.find('.like-count');
+        let token = form.find('input[name="_token"]').val();
+
+        $.ajax({
+            url: `/posts/${postId}/toggle-like`,
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': token },
+            success: function(res) {
+                countSpan.text(res.count);
+                if (res.liked) {
+                likeIcon.removeClass('bi-heart').addClass('bi-heart-fill');
+
+                // Post liked, now check for user's subscription
+                if (res.postUserId && res.postUserSubscriptionId) {
+                    // If subscription exists, send notification
+                    $.ajax({
+                        url: "{{ route('notif.like') }}",
+                        method: 'GET',
+                        headers: { 'X-CSRF-TOKEN': token },
+                        data: {
+                            contents: "Hey "+res.ReceptorUserName+"! " +res.InitiatorName+" liked your post!",
+                            subscriptionIds: res.postUserSubscriptionId,
+                            url: window.location.href, // or the post URL
+                            userId: res.ReceptorUserId,
+                            initiatorId: res.InitiatorId
+                        },
+                        success: function(notifRes) {
+                            console.log('Notification sent successfully!');
+                            loadNotifications();
+                        },
+                        error: function() {
+                            console.error('Failed to send notification.');
+                        }
+                    });
+                }
+            } else {
+                likeIcon.removeClass('bi-heart-fill').addClass('bi-heart');
+            }
+            }
+        });
+    });
 });
 </script>
 @endpush
