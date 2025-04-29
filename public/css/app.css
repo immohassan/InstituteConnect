@@ -1,3 +1,5 @@
+@source '../../vendor/namu/wirechat/resources/views/**/*.blade.php';
+@source '../../vendor/namu/wirechat/src/Livewire/**/*.php';
 /* 
  * EdConnect - Educational Social Media Platform
  * Main Stylesheet

@@ -98,3 +98,18 @@
   font-size: 24px;
   transition: bottom 0.3s ease;
 }
+
+.comment-section{
+  border-bottom: 1px solid #797979;
+  padding-bottom: 10px;
+}
+
+.comment-box{
+  color: white !important;
+  background-color: transparent !important;
+  border-color: #4b4b4b;
+}
+.comment-box::placeholder{
+  color: #d9d9d9;
+  font-size: 12px;
+}

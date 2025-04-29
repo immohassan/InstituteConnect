@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Events Calendar')
+@section('title', 'Events Calendar | Campus Connect')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/events.css') }}">
 @endpush

@@ -19,6 +19,8 @@ class Notification extends Model
         'type', // announcement, post, comment, like, chat_request, etc.
         'data', // JSON data specific to notification type
         'read_at',
+        'from_user_id',
+        'content',
     ];
     
     /**
