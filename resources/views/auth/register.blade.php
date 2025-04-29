@@ -4,7 +4,7 @@
 <div class="container register-container">
     <div class="card">
         <div class="card-header bg-white">
-            <h4 class="mb-0 py-2">Register</h4>
+            <h4 class="mb-0 py-2 text-center">Register</h4>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ route('register') }}">

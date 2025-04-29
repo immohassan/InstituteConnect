@@ -48,6 +48,8 @@ Route::get('/static-suggestions', [UserController::class, 'staticSuggestions'])-
 Route::resource('posts', 'App\Http\Controllers\PostController');
 Route::post('posts/create',[PostController::class, 'user_post_create'])->name('users_post.create');
 Route::post('/posts/{post}/like', 'App\Http\Controllers\PostController@like')->name('posts.like');
+Route::post('/posts/{post}/delete', 'App\Http\Controllers\PostController@destroy')->name('posts.delete');
+
 
 // Comment routes
 Route::resource('comments', 'App\Http\Controllers\CommentController')->only(['store', 'update', 'destroy']);
@@ -55,7 +57,8 @@ Route::resource('comments', 'App\Http\Controllers\CommentController')->only(['st
 // Society routes
 // Route::resource('societies', 'App\Http\Controllers\SocietyController');
 Route::get('/societies',[SocietyController::class, 'index'])->name('societies');
-Route::get('/society/create', [SocietyController::class, 'create'])->name('society.create');
+Route::get('/societies/edit', [SocietyController::class, 'edit'])->name('society.edit');
+Route::post('societies/create',[SocietyController::class, 'create'])->name('society.create');
 
 
 // Announcement routes

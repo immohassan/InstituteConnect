@@ -21,7 +21,7 @@ class SocietyController extends Controller
         $this->middleware('auth');
         $this->middleware('role:admin,super_admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
-    
+
     /**
      * Display a listing of the societies.
      *
@@ -43,8 +43,8 @@ class SocietyController extends Controller
         $users = User::all();
         return view('society.create', compact('users'));
         // $user = Auth::user();
-        
-        
+
+
         // return view('society.create', [
         //     'user' => $user,
         // ]);
@@ -69,14 +69,14 @@ class SocietyController extends Controller
         $society->name = $request->name;
         $society->description = $request->description;
         $society->leader_id = $request->leader_id;
-        
+
         if ($request->hasFile('cover_image')) {
             $imagePath = $request->file('cover_image')->store('society_covers', 'public');
             $society->cover_image = $imagePath;
         }
-        
+
         $society->save();
-        
+
         // Add leader to society members
         $society->users()->attach($request->leader_id);
 
@@ -101,7 +101,7 @@ class SocietyController extends Controller
     {
         $society->load(['users', 'announcements', 'leader']);
         $isMember = $society->users->contains(Auth::id());
-        
+
         return view('society.show', compact('society', 'isMember'));
     }
 
@@ -114,7 +114,10 @@ class SocietyController extends Controller
     public function edit(Society $society)
     {
         $users = User::all();
-        return view('society.edit', compact('society', 'users'));
+        // return view('society.edit', compact('society', 'users'));
+        return view('society.edit', compact('society'));
+
+        return redirect()->route('societies.index')->with('success', 'Society updated successfully!');
     }
 
     /**
@@ -139,28 +142,28 @@ class SocietyController extends Controller
         ]);
 
         $oldLeaderId = $society->leader_id;
-        
+
         $society->name = $request->name;
         $society->description = $request->description;
         $society->leader_id = $request->leader_id;
-        
+
         if ($request->hasFile('cover_image')) {
             // Delete old image if exists
             if ($society->cover_image) {
                 Storage::disk('public')->delete($society->cover_image);
             }
-            
+
             $imagePath = $request->file('cover_image')->store('society_covers', 'public');
             $society->cover_image = $imagePath;
         }
-        
+
         $society->save();
-        
+
         // Ensure leader is a member
         if (!$society->users->contains($request->leader_id)) {
             $society->users()->attach($request->leader_id);
         }
-        
+
         // Update leader's role if changed
         if ($oldLeaderId != $request->leader_id) {
             $newLeader = User::query()->where('id', $request->leader_id)->first();
@@ -186,17 +189,17 @@ class SocietyController extends Controller
         if ($society->cover_image) {
             Storage::disk('public')->delete($society->cover_image);
         }
-        
+
         // Detach all users
         $society->users()->detach();
-        
+
         // Delete society
         $society->delete();
 
         return redirect()->route('societies.index')
             ->with('success', 'Society deleted successfully!');
     }
-    
+
     /**
      * Join a society.
      *
@@ -206,17 +209,17 @@ class SocietyController extends Controller
     public function join(Society $society)
     {
         $user = Auth::user();
-        
+
         if (!$society->users->contains($user->id)) {
             $society->users()->attach($user->id);
             return redirect()->route('societies.show', $society)
                 ->with('success', 'You have joined this society!');
         }
-        
+
         return redirect()->route('societies.show', $society)
             ->with('info', 'You are already a member of this society.');
     }
-    
+
     /**
      * Leave a society.
      *
@@ -226,19 +229,19 @@ class SocietyController extends Controller
     public function leave(Society $society)
     {
         $user = Auth::user();
-        
+
         // Cannot leave if you're the leader
         if ($society->leader_id == $user->id) {
             return redirect()->route('societies.show', $society)
                 ->with('error', 'As a leader, you cannot leave this society. Please assign another leader first.');
         }
-        
+
         if ($society->users->contains($user->id)) {
             $society->users()->detach($user->id);
             return redirect()->route('societies.show', $society)
                 ->with('success', 'You have left this society.');
         }
-        
+
         return redirect()->route('societies.show', $society)
             ->with('info', 'You are not a member of this society.');
     }

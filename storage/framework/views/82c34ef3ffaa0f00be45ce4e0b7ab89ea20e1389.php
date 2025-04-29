@@ -4,7 +4,7 @@
 <div class="container login-container">
     <div class="card">
         <div class="card-header bg-white">
-            <h4 class="mb-0 py-2">Login</h4>
+            <h4 class="mb-0 py-2 text-center">Login</h4>
         </div>
         <div class="card-body">
             <form method="POST" action="<?php echo e(route('login')); ?>">

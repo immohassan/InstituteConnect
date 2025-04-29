@@ -25,9 +25,9 @@
         </div>
     </div>
     @endforeach
-    <a href="{{ route('posts.create') }}" class="create-post-btn btn btn-primary rounded-circle shadow" data-bs-toggle="tooltip"
+    <a href="{{ route('society.create') }}" class="create-post-btn btn btn-primary rounded-circle shadow" data-bs-toggle="tooltip"
     data-bs-placement="left"
-    title="Create Post">                    
+    title="Create Society">                    
         <i class="bi bi-plus-lg"></i>
     </a>  
 </div>

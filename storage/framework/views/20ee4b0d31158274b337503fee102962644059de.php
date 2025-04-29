@@ -48,6 +48,9 @@
         }
         .card {
             border-radius: 10px;
+            /*width: 700px;
+            /*margin: auto;
+            /*background-color: #1e1e1e;
             /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
             border: none;
         }
