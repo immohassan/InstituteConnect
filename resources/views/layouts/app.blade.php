@@ -150,7 +150,7 @@
                                 
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link position-relative" href="#">
+                                <a class="nav-link position-relative" href="/chatify">
                                     <i class="bi bi-chat fs-5"></i>
                                     <span class="position-absolute translate-middle bg-danger border-light rounded-circle" style="padding: 0.3rem !important; top: 17px;left: 25px;">
                                         <span class="visually-hidden">New alerts</span>
@@ -167,9 +167,9 @@
                                         {{ __('Profile') }}
                                     </a>
                                     
-                                    @if(Auth::user()->isAdmin() || Auth::user()->isSuperAdmin())
-                                        <a class="dropdown-item" href="#">
-                                            {{ __('Admin Panel') }}
+                                    @if(Auth::user()->role == 'admin' || Auth::user()->role == 'dev')
+                                        <a class="dropdown-item" href="{{ route('dashboard') }}">
+                                            {{ __('Admin Dashboard') }}
                                         </a>
                                     @endif
                                     

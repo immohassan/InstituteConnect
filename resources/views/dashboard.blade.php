@@ -1,10 +1,12 @@
 @extends('layouts.app')
-
+@push('styles')
+@endpush
 @section('content')
 @php
-    $posts = $posts->filter(function($post) use ($user) {
-        return $post->user_id === $user->id;
-    });
+    if(Auth::user()->role == 'user'){
+        Auth::logout();
+        return redirect('/home');
+    }
 @endphp
 <div class="container">
     <div class="row justify-content-center">
@@ -29,7 +31,7 @@
             </div>
 
             <!-- Societies -->
-            <div class="card mb-4">
+            {{-- <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Your Societies</h5>
                 </div>
@@ -47,13 +49,13 @@
                         <p class="text-muted">You are not part of any societies yet.</p>
                     @endif
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <div class="col-md-6">
             <!-- Create Post -->
             <div class="card border-0 shadow-sm rounded-3 p-3 mb-4" style="max-width: 600px; margin: auto;">
-                <form method="POST" action="{{ route('users_post.create') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('admin_post.create') }}" enctype="multipart/form-data">
                     @csrf
                     <textarea 
                         name="content" 
@@ -136,15 +138,8 @@
                                         <i class="bi bi-chat"></i> {{ $post->comments->count() }}
                                     </button>
                                 </div>
-                                @if($post->user_id === $user->id || $user->isAdmin() || $user->isSuperAdmin())
+                                @if($user->role == 'admin' || $user->role == 'dev')
                                 <div class="d-flex gap-2">
-                                    @if($post->user_id === $user->id)
-                                        <!-- Edit Button -->
-                                        <button class="btn btn-sm btn-outline-secondary" title="Edit" data-bs-toggle="modal" data-bs-target="#editPostModal{{ $post->id }}">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    @endif
-                            
                                     <!-- Delete Button -->
                                     <button class="btn btn-sm btn-outline-danger" title="Delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $post->id }}">
                                         <i class="bi bi-trash"></i>
@@ -294,7 +289,7 @@
 
         <div class="col-md-3">
             <!-- Announcements -->
-            <div class="card mb-4">
+            <div class="card mb-4" style="    z-index: -10;">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Announcements</h5>
                 </div>
@@ -315,13 +310,13 @@
             </div>
 
             <!-- Academic Resources -->
-            <div class="card">
+            {{-- <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Academic Resources</h5>
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
-                        <a href="{{ route('resources.results') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             <div>
                                 <i class="bi bi-file-earmark-bar-graph text-primary me-2"></i>
                                 Results
@@ -340,7 +335,7 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

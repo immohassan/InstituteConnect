@@ -16,12 +16,15 @@
     
         <!-- Card Body -->
         <div class="card-body">
+            <a href="{{ route('societies.show') }}" style="text-decoration: none">
             <h5 class="card-title mb-1">{{ $society->name }}</h5>
             <p class="card-text small mb-1 text-white-50">
                 {{ $society->description }}
             </p>
             <p class="card-text text-secondary" style="font-size: 0.85rem;">{{ $society->followers }} followers</p>
+        </a>
             <button class="btn btn-outline-primary btn-sm rounded-pill px-3">+ Follow</button>
+
         </div>
     </div>
     @endforeach
