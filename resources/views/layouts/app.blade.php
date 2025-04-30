@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -229,9 +230,9 @@
                     <p class="mb-0" style="color:white;">&copy; {{ date('Y') }} {{ config('app.name', 'Educational Social Platform') }}. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <a href="#" class="text-decoration-none me-3" style="color:white;">Terms of Service</a>
-                    <a href="#" class="text-decoration-none me-3" style="color:white;">Privacy Policy</a>
-                    <a href="#" class="text-decoration-none" style="color:white;">Contact Us</a>
+                    <a href="{{ route('terms') }}" class="text-decoration-none me-3" style="color:white;">Terms of Service</a>
+                    <a href="{{ route('privacy') }}" class="text-decoration-none me-3" style="color:white;">Privacy Policy</a>
+                    <a href="{{ route('contact') }}" class="text-decoration-none" style="color:white;">Contact Us</a>
                 </div>
             </div>
         </div>
