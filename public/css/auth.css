@@ -1,0 +1,43 @@
+.body{
+    color: black !important;
+}
+.main-section{
+    width: 700px;
+    height: 100%;
+    margin-top: 50px;
+    padding: 30px 50px 50px 50px;
+    background-color: #1e1e1e;
+    border-radius: 24px;
+}
+
+.main-heading{
+    text-align: center;
+    color: white;
+    font-size: 25px;
+}
+
+.card-body{
+    background-color: #1e1e1e;
+    color:white;
+    padding: 0px;;
+}
+
+.form-control{
+    color: #d9d9d9;
+    background-color: #1e1e1e;
+    border-color: #797979;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    color: #d9d9d9;
+    background-color: #1e1e1e;
+    border-color: #797979;
+    box-shadow: none;
+}
+
+.form-label{
+    color: #d9d9d9;
+    font-size: 14px;
+    margin-bottom: 0px;;
+}

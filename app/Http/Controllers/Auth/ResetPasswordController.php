@@ -11,7 +11,11 @@ use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {
+<<<<<<< HEAD
     protected $redirectTo = '/home';
+=======
+    protected $redirectTo = '/dashboard';
+>>>>>>> main
     
     public function __construct()
     {
