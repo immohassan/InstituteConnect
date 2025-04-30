@@ -82,3 +82,7 @@ Route::get('/sendNotif/follow', [NotificationsController::class, 'send_follow_no
 Route::post('/save-subscription-id', [UserController::class, 'saveSubscriptionId']);
 Route::get('/get-notifications', [NotificationsController::class, 'navbarNotifications']);
 
+//Footer
+Route::view('/terms', 'footer.terms')->name('terms');
+Route::view('/privacy', 'footer.privacy')->name('privacy');
+Route::view('/contact', 'footer.contact')->name('contact');
