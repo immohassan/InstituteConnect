@@ -1,16 +1,17 @@
 @extends('layouts.app')
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+@endpush
 
 @section('content')
-<div class="container register-container">
+<div class="main-heading">Register</div>
+<div class="container register-container main-section">
     <div class="card">
-        <div class="card-header bg-white">
-            <h4 class="mb-0 py-2">Register</h4>
-        </div>
         <div class="card-body">
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="name" class="form-label">Name</label>
                     <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
                     @error('name')
@@ -20,7 +21,7 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="email" class="form-label">Email Address</label>
                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
                     @error('email')
@@ -30,7 +31,7 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="password" class="form-label">Password</label>
                     <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
                     @error('password')
@@ -40,7 +41,7 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="password-confirm" class="form-label">Confirm Password</label>
                     <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                 </div>

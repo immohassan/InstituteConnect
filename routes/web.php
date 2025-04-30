@@ -12,6 +12,8 @@ use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\SocietyController;
 use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\AnnouncementController;
+use App\Models\Announcement;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +34,7 @@ Route::get('/', function () {
 require __DIR__.'/auth.php';
 
 // Dashboard route
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/admin-dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::post('/follow/{user}', [UserController::class, 'follow'])->name('follow');
 Route::post('/unfollow/{user}', [UserController::class, 'unfollow'])->name('unfollow');
 
@@ -48,8 +50,9 @@ Route::get('/static-suggestions', [UserController::class, 'staticSuggestions'])-
 // Post routes
 Route::resource('posts', 'App\Http\Controllers\PostController');
 Route::post('posts/create',[PostController::class, 'user_post_create'])->name('users_post.create');
+Route::post('posts/admin-create',[AnnouncementController::class, 'admin_post_create'])->name('admin_post.create');
 // Route::post('/posts/{post}/like', 'App\Http\Controllers\PostController@like')->name('posts.like');
-Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike']);
+Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike'])->name('posts.like');
 Route::post('/posts/post-comment', [PostController::class, 'post_comment'])->name('comments.store');
 
 
@@ -59,6 +62,7 @@ Route::post('/posts/post-comment', [PostController::class, 'post_comment'])->nam
 // Society routes
 // Route::resource('societies', 'App\Http\Controllers\SocietyController');
 Route::get('/societies',[SocietyController::class, 'index'])->name('societies');
+Route::get('/societies/profile',[SocietyController::class, 'show'])->name('societies.show');
 
 // Announcement routes
 Route::resource('announcements', 'App\Http\Controllers\AnnouncementController');
