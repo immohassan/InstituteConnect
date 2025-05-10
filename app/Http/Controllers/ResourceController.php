@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subject;
-use App\Models\Result;
+use App\Models\Resource;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,37 +20,6 @@ class ResourceController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Display the student's results.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function results()
-    {
-        $user = Auth::user();
-        $subjects = Subject::all();
-        $results = $user->results;
-
-        return view('resources.results', compact('subjects', 'results'));
-    }
-
-    /**
-     * Display the student's attendance.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function attendance()
-    {
-        $user = Auth::user();
-        $subjects = Subject::all();
-        $attendances = Attendance::query()->where('user_id', $user->id)
-            ->orderBy('date', 'desc')
-            ->get()
-            ->groupBy('subject_id');
-
-        return view('resources.attendance', compact('subjects', 'attendances'));
-    }
-
     public function index(){
         $user = Auth::user();
                 
@@ -60,5 +29,30 @@ class ResourceController extends Controller
         return view('resources.resources', [
             'user' => $user
         ]);
+    }
+
+    public function show(Request $request){
+        $resources = Resource::all()->where('semester_id' ,$request->id);
+        return view('resources.table', ['id' => $request->id, 'resources' => $resources]);
+    }
+
+    public function delete(Request $request){
+        $resources = Resource::findOrFail($request->id);
+        $resources->delete();
+        return back()->with('success', 'Resource deleted successfully.');
+    }
+
+    public function add(Request $request){ 
+        $resource = new Resource();
+        $resource->semester_id = $request->semester_id;
+        $resource->subject_name = $request->subject_name;
+        if($request->file_name){
+            $file = $request->file('file_name');
+            $fileName = time() . '_' . $file->getClientOriginalName(); // optional: Str::random(10) for unique names
+            $file->move(public_path('docs'), $fileName); // Moves to public/images/
+            $resource->file_name = $fileName; // Save just the name or 'images/'.$fileName if needed
+        }
+        $resource->save();
+        return back()->with('success', 'Resource added successfully');
     }
 }

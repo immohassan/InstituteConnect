@@ -34,7 +34,7 @@
                     <p class="card-text">{{ $post->content }}</p>
                     @if($post->image)
                         <div class="mt-3">
-                            <img src="{{ asset('storage/' . $post->image) }}" style="max-height: 300px; max-width: 100%; object-fit: cover; border-radius: 10px; cursor: zoom-in;"
+                            <img src="{{ asset($post->image) }}" style="max-height: 300px; max-width: 100%; object-fit: cover; border-radius: 10px; cursor: zoom-in;"
                             alt="Post Image" class="img-fluid rounded mb-3" data-bs-toggle="modal"
                             data-bs-target="#imageModal{{ $post->id }}">
                         </div>
@@ -44,7 +44,7 @@
                             <div class="modal-dialog modal-dialog-centered modal-lg">
                                 <div class="modal-content bg-transparent border-0">
                                     <div class="modal-body text-center p-0">
-                                        <img src="{{ asset('storage/' . $post->image) }}" alt="Zoomed Image" class="img-fluid rounded">
+                                        <img src="{{ asset($post->image) }}" alt="Zoomed Image" class="img-fluid rounded">
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@
                             <div id="preview{{ $post->id }}" class="mt-2 d-flex gap-2 flex-wrap">
                                 @if($post->image)
                                 <div class="position-relative">
-                                    <img src="{{ asset('storage/' . $post->image) }}"
+                                    <img src="{{ asset($post->image) }}"
                                         style="max-height: 100px; max-width: 100px; object-fit: cover; border-radius: 5px;"
                                         class="img-thumbnail">
                                     <button type="button"

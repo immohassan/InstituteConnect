@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
 <head>
     <meta charset="utf-8">
@@ -235,9 +236,9 @@
                     <p class="mb-0" style="color:white;">&copy; <?php echo e(date('Y')); ?> <?php echo e(config('app.name', 'Educational Social Platform')); ?>. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <a href="#" class="text-decoration-none me-3" style="color:white;">Terms of Service</a>
-                    <a href="#" class="text-decoration-none me-3" style="color:white;">Privacy Policy</a>
-                    <a href="#" class="text-decoration-none" style="color:white;">Contact Us</a>
+                    <a href="<?php echo e(route('terms')); ?>" class="text-decoration-none me-3" style="color:white;">Terms of Service</a>
+                    <a href="<?php echo e(route('privacy')); ?>" class="text-decoration-none me-3" style="color:white;">Privacy Policy</a>
+                    <a href="<?php echo e(route('contact')); ?>" class="text-decoration-none" style="color:white;">Contact Us</a>
                 </div>
             </div>
         </div>
@@ -247,6 +248,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+    
 <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {

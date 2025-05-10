@@ -65,13 +65,15 @@ class PostController extends Controller
             $post->content = $req->content;
             if ($req->hasFile('attachment')) {
                 foreach ($req->file('attachment') as $file) {
-                $imagePath = $file->store('post_images', 'public');
-                $post->image = $imagePath;
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $destinationPath = public_path('images/post-images');
+                    $file->move($destinationPath, $fileName);
+                    $post->image = 'images/post-images/' . $fileName; // relative path to access via URL
                 }
-            }
+            }            
             $post->status = "active";
             $post->save();
-            return redirect()->route('dashboard');
+            return redirect()->route('home');
         }
         }catch(\Exception $e){
             return "There is an error: " . $e->getMessage();
@@ -252,7 +254,7 @@ public function post_comment(Request $request)
     {
         // Check if the user is the post creator
         if (Auth::id() !== $post->user_id && !Auth::user()->isAdmin() && !Auth::user()->isSuperAdmin()) {
-            return redirect()->route('dashboard')
+            return redirect()->route('home')
                 ->with('error', 'You do not have permission to edit this post.');
         }
         
@@ -292,7 +294,7 @@ public function post_comment(Request $request)
         
         $post->save();
 
-        return redirect()->route('dashboard', $post)
+        return redirect()->route('home', $post)
             ->with('status', 'Post updated successfully!');
     }
 
@@ -305,8 +307,8 @@ public function post_comment(Request $request)
     public function destroy(Post $post)
     {
         // Check if the user is the post creator or an admin
-        if (Auth::id() !== $post->user_id && !Auth::user()->isAdmin() && !Auth::user()->isSuperAdmin()) {
-            return redirect()->route('dashboard')
+        if (Auth::id() !== $post->user_id && Auth::user()->role != "admin" && Auth::user()->role != "dev") {
+            return redirect()->route('home')
                 ->with('error', 'You do not have permission to delete this post.');
         }
         // Delete image if exists
@@ -319,7 +321,7 @@ public function post_comment(Request $request)
         
         // Delete post
         $post->delete();
-        return redirect()->route('dashboard')
+        return redirect()->route('home')
             ->with('status', 'Post deleted successfully!');
     }
     

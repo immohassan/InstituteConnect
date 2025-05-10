@@ -47,10 +47,13 @@
                 <?php elseif($user->semester == 8 || $user->semester == 7 || $user->semester == 6 || $user->semester == 5 || $user->semester == 4): ?>th 
                 <?php endif; ?> Semester
             </div>
-            <div class="edit-profile-btn">
+            <div class="edit-profile-btn d-flex align-content-center justify-content-between">
                 <?php if(Auth::user()->id == $user->id): ?>
                     <a href="<?php echo e(route('profile.edit')); ?>" class="btn btn-outline-light px-4" style="text-decoration: none;">
                         Edit Profile
+                    </a>
+                    <a href="<?php echo e(route('society.edit', ['id' => $user->id])); ?>" class="btn btn-outline-danger px-4" style="text-decoration: none; border: 2px solid;">
+                        Delete Profile
                     </a>
                 <?php else: ?>
                     <button id="" 

@@ -34,7 +34,7 @@
                     <p class="card-text"><?php echo e($post->content); ?></p>
                     <?php if($post->image): ?>
                         <div class="mt-3">
-                            <img src="<?php echo e(asset('storage/' . $post->image)); ?>" style="max-height: 300px; max-width: 100%; object-fit: cover; border-radius: 10px; cursor: zoom-in;"
+                            <img src="<?php echo e(asset($post->image)); ?>" style="max-height: 300px; max-width: 100%; object-fit: cover; border-radius: 10px; cursor: zoom-in;"
                             alt="Post Image" class="img-fluid rounded mb-3" data-bs-toggle="modal"
                             data-bs-target="#imageModal<?php echo e($post->id); ?>">
                         </div>
@@ -44,7 +44,7 @@
                             <div class="modal-dialog modal-dialog-centered modal-lg">
                                 <div class="modal-content bg-transparent border-0">
                                     <div class="modal-body text-center p-0">
-                                        <img src="<?php echo e(asset('storage/' . $post->image)); ?>" alt="Zoomed Image" class="img-fluid rounded">
+                                        <img src="<?php echo e(asset($post->image)); ?>" alt="Zoomed Image" class="img-fluid rounded">
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@
                             <div id="preview<?php echo e($post->id); ?>" class="mt-2 d-flex gap-2 flex-wrap">
                                 <?php if($post->image): ?>
                                 <div class="position-relative">
-                                    <img src="<?php echo e(asset('storage/' . $post->image)); ?>"
+                                    <img src="<?php echo e(asset($post->image)); ?>"
                                         style="max-height: 100px; max-width: 100px; object-fit: cover; border-radius: 5px;"
                                         class="img-thumbnail">
                                     <button type="button"

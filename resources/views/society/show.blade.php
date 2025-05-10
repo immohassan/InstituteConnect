@@ -4,51 +4,53 @@
 @endpush
 @section('content')
 @php
-    $posts = $posts->filter(function($post) use ($user) {
-        return $post->user_id === $user->id;
+    $posts = $posts->filter(function($post) use ($society) {
+        return $post->society_id === $society->id;
     });
 @endphp
 <div class="container main-section" id="post-container">
+    <img src="{{ asset('images/' . $society->cover_image) }}" class="card-img-top" alt="Banner" style="height: 140px;
+    object-fit: cover;
+    margin: -50px;
+    margin-top: -70px;
+    width: calc(100% + 100px);
+    border-radius: 24px 24px 0px 0px;">
     <div class="container text-white py-4">
         <div class="d-flex align-items-top">
             <!-- Info Section -->
             <div class="ms-1 col-md-6">
-                <p class="mb-1 user-name mt-4">
-                {{ $user->name }} 
+                <p class="mb-1 user-name mt-5">
+                {{ $society->name }} 
                 </p>
                 <p>
-                    {{ $user->bio ?: 'No bio added yet' }}<br>
-                    <span style="font-size: 14px"><strong id="followers-count">{{ $user->followers }}</strong> Connections</span>
+                    {{ $society->description ?: 'No bio added yet' }}<br>
+                    <span style="font-size: 14px"><strong id="followers-count">{{ $society->followers }}</strong> Followers</span>
                 </p>
                 
             </div>
 
             <!-- Profile Image Placeholder -->
             <div class="rounded-circle bg-secondary profile-pic" style="width: 100px; height: 100px;">
-                @if($user->profile_picture)
-                <img src="{{ asset('images/profile/' . $user->profile_picture) }}" alt="{{ strtoupper(substr($user->name, 0, 1)) }}" style="object-fit: cover; height: 100px; width:100px" class="rounded-circle">
+                @if($society->logo)
+                <img src="{{ asset('images/' . $society->logo) }}" alt="{{ strtoupper(substr($society->name, 0, 1)) }}" style="object-fit: cover; height: 100px; width:100px" class="rounded-circle">
                 @else
                 <div class="d-flex align-items-center justify-content-center">
-                    <span>{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                    <span>{{ strtoupper(substr($society->name, 0, 1)) }}</span>
                 </div>
                 @endif
             </div>
-            </div>
-            <div class="user-institute">
-                <i class="bi bi-patch-check-fill"></i>
-                {{ $user->department ?: 'Department not set' }}
-            </div>
-            <div class="society-member">
-                <i class="bi bi-building-fill"></i>
-                {{ $user->semester}}@if($user->semester == 1)st
-                @elseif($user->semester == 1)nd @elseif($user->semester == 3)rd
-                @elseif($user->semester == 8 || $user->semester == 7 || $user->semester == 6 || $user->semester == 5 || $user->semester == 4)th 
-                @endif Semester
-            </div>
-            <div class="edit-profile-btn">
-                @if(Auth::user()->id == $user->id)
-                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-light px-4" style="text-decoration: none;">
-                        Edit Profile
+        </div>
+        <div class="user-institute">
+            <i class="bi bi-patch-check-fill"></i>
+            {{ $society->email }}
+        </div>
+            <div class="edit-profile-btn d-flex align-content-center justify-content-between">
+                @if(Auth::user()->role == 'sub-admin' || Auth::user()->role == 'dev')
+                    <a href="{{ route('society.edit', ['id' => $society->id]) }}" class="btn btn-outline-light px-4" style="text-decoration: none; border: 2px solid;">
+                        Edit Society
+                    </a>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $society->id }}" class="btn btn-outline-danger px-4" style="text-decoration: none; border: 2px solid;">
+                        Delete Society
                     </a>
                 @else
                     <button id="" 
@@ -57,13 +59,32 @@
                         {{ auth()->user()->following->contains($user->id) ? 'Unfollow' : 'Follow' }}
                     </button>
                 @endif
-            </div>            
+            </div>  
+            <div class="modal fade" id="deleteModal{{ $society->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $society->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-sm rounded-3 p-3" style="max-width: 500px; margin: auto;">
+                        <div class="modal-body text-center">
+                            <h5 class="mb-3 text-black">Are you sure you want to delete this Society?</h5>
+                            <p class="text-muted small mb-4">This action cannot be undone.</p>
+                            <form action="{{ route('society.delete', $society->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button type="button" class="btn btn-sm btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-4">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="container section-breaker"></div>
         </div>
 
 
         @if(count($posts) > 0)
         @foreach($posts as $post)
+        @if($post->society_id == $society->id)
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="d-flex align-items-center">
@@ -84,7 +105,7 @@
                     <p class="card-text">{{ $post->content }}</p>
                     @if($post->image)
                         <div class="mt-3">
-                            <img src="{{ asset('storage/' . $post->image) }}" style="max-height: 300px; max-width: 100%; object-fit: cover; border-radius: 10px; cursor: zoom-in;"
+                            <img src="{{ asset($post->image) }}" style="max-height: 300px; max-width: 100%; object-fit: cover; border-radius: 10px; cursor: zoom-in;"
                             alt="Post Image" class="img-fluid rounded mb-3" data-bs-toggle="modal"
                             data-bs-target="#imageModal{{ $post->id }}">
                         </div>
@@ -94,7 +115,7 @@
                             <div class="modal-dialog modal-dialog-centered modal-lg">
                                 <div class="modal-content bg-transparent border-0">
                                     <div class="modal-body text-center p-0">
-                                        <img src="{{ asset('storage/' . $post->image) }}" alt="Zoomed Image" class="img-fluid rounded">
+                                        <img src="{{ asset($post->image) }}" alt="Zoomed Image" class="img-fluid rounded">
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +177,7 @@
                             <div id="preview{{ $post->id }}" class="mt-2 d-flex gap-2 flex-wrap">
                                 @if($post->image)
                                 <div class="position-relative">
-                                    <img src="{{ asset('storage/' . $post->image) }}"
+                                    <img src="{{ asset($post->image) }}"
                                         style="max-height: 100px; max-width: 100px; object-fit: cover; border-radius: 5px;"
                                         class="img-thumbnail">
                                     <button type="button"
@@ -265,11 +286,12 @@
                     </form>
                 </div>
             </div>
+            @endif
         @endforeach
     @else
         <div class="card mb-4">
             <div class="card-body text-center py-5">
-                <p class="mb-0">No posts to show.</p>
+                <p class="mb-0">No posts by this Society</p>
             </div>
         </div>
     @endif
