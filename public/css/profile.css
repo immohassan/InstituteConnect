@@ -21,18 +21,18 @@
 }
 
 .edit-profile-btn a{
-    border: none !important;
-    width: 100%;
+    /* border: none !important; */
+    width: 48%;
 }
 
 .edit-profile-btn button{
-    border: none !important;
+    border: 2px solid white;
     width: 100%;
 }
 
 
 .edit-profile-btn{
-    border: 2px solid white;
+    /* border: 2px solid white; */
     border-radius: 8px;
     margin-top: 30px;
 }

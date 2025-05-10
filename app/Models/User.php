@@ -263,4 +263,10 @@ class User extends Authenticatable
     {
         return $this->role === 'sub_admin';
     }
+
+    public function followedSocieties()
+{
+    return $this->belongsToMany(Society::class, 'society_user')->withTimestamps();
+}
+
 }

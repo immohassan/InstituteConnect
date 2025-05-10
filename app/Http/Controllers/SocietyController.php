@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Society;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,221 +20,122 @@ class SocietyController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:admin,super_admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
+        $this->middleware('role:admin,super-admin,dev,sub-admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
-    
-    /**
-     * Display a listing of the societies.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $societies = Society::with('users')->get();
         return view('society.index', compact('societies'));
     }
 
-    /**
-     * Show the form for creating a new society.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function show(Request $req)
     {
-        $users = User::all();
-        return view('society.create', compact('users'));
-    }
-
-    /**
-     * Store a newly created society in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:societies',
-            'description' => 'required|string',
-            'leader_id' => 'required|exists:users,id',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        $user = Auth::user();
+        $posts = Post::all();
+        $society = Society::findOrFail($req->id);
+        return view('society.show', [
+            'society' => $society,
+            'user' => $user,
+            'posts' => $posts
         ]);
-
-        $society = new Society();
-        $society->name = $request->name;
-        $society->description = $request->description;
-        $society->leader_id = $request->leader_id;
-        
-        if ($request->hasFile('cover_image')) {
-            $imagePath = $request->file('cover_image')->store('society_covers', 'public');
-            $society->cover_image = $imagePath;
-        }
-        
-        $society->save();
-        
-        // Add leader to society members
-        $society->users()->attach($request->leader_id);
-
-        // Update user role to sub_admin if they aren't already an admin or super_admin
-        $leader = User::query()->where('id', $request->leader_id)->first();
-        if ($leader && !in_array($leader->role, ['admin', 'super_admin'])) {
-            $leader->role = 'sub_admin';
-            $leader->save();
-        }
-
-        return redirect()->route('societies.index')
-            ->with('success', 'Society created successfully!');
     }
 
-    /**
-     * Display the specified society.
-     *
-     * @param  \App\Models\Society  $society
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Society $society)
-    {
-        $society->load(['users', 'announcements', 'leader']);
-        $isMember = $society->users->contains(Auth::id());
-        
-        return view('society.show', compact('society', 'isMember'));
-    }
 
-    /**
-     * Show the form for editing the specified society.
-     *
-     * @param  \App\Models\Society  $society
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Society $society)
+    public function edit(Request $req)
     {
-        $users = User::all();
-        return view('society.edit', compact('society', 'users'));
-    }
-
-    /**
-     * Update the specified society in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Society  $society
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Society $society)
-    {
-        $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('societies')->ignore($society->id),
-            ],
-            'description' => 'required|string',
-            'leader_id' => 'required|exists:users,id',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        $society = Society::findOrFail($req->id);
+        return view('society.edit', [
+            'society' => $society
         ]);
+    }
 
-        $oldLeaderId = $society->leader_id;
-        
+    public function update(Request $request)
+    {
+        // dd($request->all());
+        $society = Society::findOrFail($request->id);
         $society->name = $request->name;
-        $society->description = $request->description;
-        $society->leader_id = $request->leader_id;
-        
-        if ($request->hasFile('cover_image')) {
-            // Delete old image if exists
-            if ($society->cover_image) {
-                Storage::disk('public')->delete($society->cover_image);
-            }
-            
-            $imagePath = $request->file('cover_image')->store('society_covers', 'public');
-            $society->cover_image = $imagePath;
+        $society->description = $request->bio;
+        $society->email = $request->email;
+        if($request->profile_picture){
+            $file = $request->file('profile_picture');
+            $fileName = time() . '_' . $file->getClientOriginalName(); // optional: Str::random(10) for unique names
+            $file->move(public_path('images'), $fileName); // Moves to public/images/
+            $society->logo = $fileName; // Save just the name or 'images/'.$fileName if needed
         }
-        
-        $society->save();
-        
-        // Ensure leader is a member
-        if (!$society->users->contains($request->leader_id)) {
-            $society->users()->attach($request->leader_id);
-        }
-        
-        // Update leader's role if changed
-        if ($oldLeaderId != $request->leader_id) {
-            $newLeader = User::query()->where('id', $request->leader_id)->first();
-            if ($newLeader && !in_array($newLeader->role, ['admin', 'super_admin'])) {
-                $newLeader->role = 'sub_admin';
-                $newLeader->save();
-            }
+        if($request->cover_photo){
+            $file = $request->file('cover_photo');
+            $fileName = time() . '_' . $file->getClientOriginalName(); // optional: Str::random(10) for unique names
+            $file->move(public_path('images'), $fileName); // Moves to public/images/
+            $society->cover_image = $fileName; // Save just the name or 'images/'.$fileName if needed
         }
 
-        return redirect()->route('societies.index')
+        $society->save();
+        return redirect()->route('societies.show', ['id' => $society->id])
             ->with('success', 'Society updated successfully!');
     }
 
-    /**
-     * Remove the specified society from storage.
-     *
-     * @param  \App\Models\Society  $society
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Society $society)
-    {
-        // Delete cover image if exists
-        if ($society->cover_image) {
-            Storage::disk('public')->delete($society->cover_image);
-        }
-        
-        // Detach all users
-        $society->users()->detach();
-        
-        // Delete society
+    public function delete(Request $req){
+        $society = Society::findOrFail($req->id);
         $society->delete();
+        return redirect()->route('societies')->with('success', 'Society deleted successfully.');
+    }
 
-        return redirect()->route('societies.index')
-            ->with('success', 'Society deleted successfully!');
+    public function new(){
+        return view('society.add');
     }
-    
-    /**
-     * Join a society.
-     *
-     * @param  \App\Models\Society  $society
-     * @return \Illuminate\Http\Response
-     */
-    public function join(Society $society)
-    {
-        $user = Auth::user();
-        
-        if (!$society->users->contains($user->id)) {
-            $society->users()->attach($user->id);
-            return redirect()->route('societies.show', $society)
-                ->with('success', 'You have joined this society!');
+
+    public function add(Request $request){
+        // dd($req->all());
+        $society = new Society();
+        $society->name = $request->name;
+        $society->description = $request->bio;
+        $society->email = $request->email;
+        $society->status = "active";
+        $society->followers = 0;
+        if($request->profile_picture){
+            $file = $request->file('profile_picture');
+            $fileName = time() . '_' . $file->getClientOriginalName(); // optional: Str::random(10) for unique names
+            $file->move(public_path('images'), $fileName); // Moves to public/images/
+            $society->logo = $fileName; // Save just the name or 'images/'.$fileName if needed
         }
-        
-        return redirect()->route('societies.show', $society)
-            ->with('info', 'You are already a member of this society.');
+        if($request->cover_photo){
+            $file = $request->file('cover_photo');
+            $fileName = time() . '_' . $file->getClientOriginalName(); // optional: Str::random(10) for unique names
+            $file->move(public_path('images'), $fileName); // Moves to public/images/
+            $society->cover_image = $fileName; // Save just the name or 'images/'.$fileName if needed
+        }
+
+        $society->save();
+        return redirect()->route('societies.show', ['id' => $society->id])
+            ->with('success', 'Society updated successfully!');
     }
-    
-    /**
-     * Leave a society.
-     *
-     * @param  \App\Models\Society  $society
-     * @return \Illuminate\Http\Response
-     */
-    public function leave(Society $society)
-    {
-        $user = Auth::user();
-        
-        // Cannot leave if you're the leader
-        if ($society->leader_id == $user->id) {
-            return redirect()->route('societies.show', $society)
-                ->with('error', 'As a leader, you cannot leave this society. Please assign another leader first.');
-        }
-        
-        if ($society->users->contains($user->id)) {
-            $society->users()->detach($user->id);
-            return redirect()->route('societies.show', $society)
-                ->with('success', 'You have left this society.');
-        }
-        
-        return redirect()->route('societies.show', $society)
-            ->with('info', 'You are not a member of this society.');
+
+    public function follow($id)
+{
+    $user = auth()->user();
+    $society = Society::findOrFail($id);
+
+    // Attach user if not already following
+    if (!$user->followedSocieties->contains($id)) {
+        $user->followedSocieties()->attach($id);
+        $society->increment('followers');
     }
+
+    return response()->json(['followers' => $society->followers,'status' => 'followed' ]);
+}
+
+public function unfollow($id)
+{
+    $user = auth()->user();
+    $society = Society::findOrFail($id);
+
+    if ($user->followedSocieties->contains($id)) {
+        $user->followedSocieties()->detach($id);
+        $society->decrement('followers');
+    }
+
+    return response()->json(['followers' => $society->followers, 'status' => 'unfollowed']);
+}
+
 }

@@ -127,4 +127,26 @@ class AdminController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', 'User deleted successfully!');
     }
+
+
+    public function admin_portal_show(){
+        $users = User::all();
+        return view('admin.portal', [
+            'users' => $users
+        ]);
+    }
+
+    public function user_delete( Request $request){
+        $user = User::findOrFail($request->id);
+        $user->delete();
+        return back()->with('success', 'User deleted successfully');
+    }
+
+    public function user_update(Request $request){
+        $user = User::findOrFail($request->id);
+        $user->role = strtolower($request->role);
+        $user->save();
+
+        return back()->with('success', 'User updated successfully');
+    }
 }

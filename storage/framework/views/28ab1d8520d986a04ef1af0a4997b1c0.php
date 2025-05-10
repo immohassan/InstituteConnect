@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="<?php echo e(asset('css/auth.css')); ?>">
 <?php $__env->stopPush(); ?>
 <?php $__env->startSection('content'); ?>
-<div class="main-heading">Register</div>
+<div class="main-heading">Login</div>
 <div class="container login-container main-section">
     <div class="card">
         <div class="card-body">

@@ -69,4 +69,10 @@ class Society extends Model
     {
         return $this->posts()->orderBy('created_at', 'desc')->get();
     }
+
+    public function followers()
+{
+    return $this->belongsToMany(User::class, 'society_user')->withTimestamps();
+}
+
 }

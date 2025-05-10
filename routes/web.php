@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -56,13 +57,23 @@ Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike'])-
 Route::post('/posts/post-comment', [PostController::class, 'post_comment'])->name('comments.store');
 
 
-// Comment routes
-// Route::resource('comments', 'App\Http\Controllers\CommentController')->only(['store', 'update', 'destroy']);
+//Admin Portal 
+Route::get('/admin-portal', [AdminController::class, 'admin_portal_show'])->name('admin.portal');
+Route::get('/admin-portal/delete/{id}', [AdminController::class, 'user_delete'])->name('user.delete');
+Route::post('/admin-portal/update/{id}', [AdminController::class, 'user_update'])->name('user.update');
 
 // Society routes
 // Route::resource('societies', 'App\Http\Controllers\SocietyController');
 Route::get('/societies',[SocietyController::class, 'index'])->name('societies');
-Route::get('/societies/profile',[SocietyController::class, 'show'])->name('societies.show');
+Route::get('/society/profile/{id}',[SocietyController::class, 'show'])->name('societies.show');
+Route::get('/society/profile/edit/{id}',[SocietyController::class, 'edit'])->name('society.edit');
+Route::post('/society/profile/update/',[SocietyController::class, 'update'])->name('society.update');
+Route::delete('/society/profile/delete/{id}',[SocietyController::class, 'delete'])->name('society.delete');
+Route::get('/society/new/',[SocietyController::class, 'new'])->name('society.new');
+Route::post('/society/add/',[SocietyController::class, 'add'])->name('society.add');
+Route::post('/society/{id}/follow', [SocietyController::class, 'follow'])->name('society.follow');
+Route::post('/society/{id}/unfollow', [SocietyController::class, 'unfollow'])->name('society.unfollow');
+
 
 // Announcement routes
 Route::resource('announcements', 'App\Http\Controllers\AnnouncementController');
@@ -72,8 +83,9 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/events', [EventsController::class, 'index'])->name('events');
 // Resource center routes
 Route::get('/resources', [ResourceController::class, 'index'])->name('resources');
-Route::get('/resources/attendance', 'App\Http\Controllers\ResourceController@attendance')->name('resources.attendance');
-
+Route::get('/resources/{id}', [ResourceController::class, 'show'])->name('resources.show');
+Route::post('/resources/add', [ResourceController::class, 'add'])->name('resources.add');
+Route::delete('/resources/delete/{id}', [ResourceController::class, 'delete'])->name('resources.delete'); 
 // Subject routes
 Route::resource('subjects', 'App\Http\Controllers\SubjectController');
 
