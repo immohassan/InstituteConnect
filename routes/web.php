@@ -59,8 +59,9 @@ Route::post('/posts/post-comment', [PostController::class, 'post_comment'])->nam
 
 //Admin Portal 
 Route::get('/admin-portal', [AdminController::class, 'admin_portal_show'])->name('admin.portal');
-Route::get('/admin-portal/delete/{id}', [AdminController::class, 'user_delete'])->name('user.delete');
+Route::delete('/admin-portal/delete/{id}', [AdminController::class, 'user_delete'])->name('user.delete');
 Route::post('/admin-portal/update/{id}', [AdminController::class, 'user_update'])->name('user.update');
+Route::post('/admin-portal/add', [AdminController::class, 'user_add'])->name('user.add');
 
 // Society routes
 // Route::resource('societies', 'App\Http\Controllers\SocietyController');
@@ -83,7 +84,8 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/events', [EventsController::class, 'index'])->name('events');
 // Resource center routes
 Route::get('/resources', [ResourceController::class, 'index'])->name('resources');
-Route::get('/resources/{id}', [ResourceController::class, 'show'])->name('resources.show');
+// Route::get('/resources/{id}', [ResourceController::class, 'show'])->name('resources.show');
+Route::get('/resources/{semester_id}/{subject_name}', [ResourceController::class, 'show'])->name('resources.show');
 Route::post('/resources/add', [ResourceController::class, 'add'])->name('resources.add');
 Route::delete('/resources/delete/{id}', [ResourceController::class, 'delete'])->name('resources.delete'); 
 // Subject routes

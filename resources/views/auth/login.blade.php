@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+<link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
+<style>
+    .card{
+    background-color: #1e1e1e !important;
+    border:none;
+}
+</style>
 @endpush
 @section('content')
 <div class="main-heading">Login</div>
