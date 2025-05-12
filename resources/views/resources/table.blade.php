@@ -2,6 +2,7 @@
 @section('title', 'Resources | Campus Connect')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 @endpush
 @section('content')
     <div class="main-heading">Resources</div>

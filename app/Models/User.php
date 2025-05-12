@@ -269,4 +269,9 @@ class User extends Authenticatable
     return $this->belongsToMany(Society::class, 'society_user')->withTimestamps();
 }
 
+public function followings()
+{
+    return $this->belongsToMany(User::class, 'followers', 'user_id', 'following_user_id');
+}
+
 }

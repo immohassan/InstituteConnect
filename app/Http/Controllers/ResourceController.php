@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use App\Models\Subject;
 use App\Models\Resource;
 use App\Models\Attendance;
@@ -26,15 +26,23 @@ class ResourceController extends Controller
         if (!$user) {
             return redirect()->route('login');
         }
+        $resources = \App\Models\Resource::all()->groupBy('semester_id');
         return view('resources.resources', [
-            'user' => $user
+            'user' => $user,
+            'resources' => $resources
         ]);
     }
 
-    public function show(Request $request){
-        $resources = Resource::all()->where('semester_id' ,$request->id);
-        return view('resources.table', ['id' => $request->id, 'resources' => $resources]);
-    }
+    public function show($id, $subject_name)
+{
+    $resources = DB::table('resources')
+        ->where('semester_id', $id)
+        ->where('subject_name', $subject_name)
+        ->get();
+
+    return view('resources.table', compact('resources', 'id', 'subject_name'));
+}
+
 
     public function delete(Request $request){
         $resources = Resource::findOrFail($request->id);

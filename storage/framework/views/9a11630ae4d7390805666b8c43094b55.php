@@ -47,16 +47,15 @@
             color: white;
             font-size: 0.75rem;
         }
-        .card {
+        /* .card {
             border-radius: 10px;
-            /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
             border: none;
         }
         .card-header {
             background-color: #1e1e1e;
             border-bottom: 1px solid #eaeaea;
             padding: 1rem;
-        }
+        } */
 
         .card-title{
             color: #ececec;
@@ -113,9 +112,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo e(route('resources')); ?>">Resources</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo e(route('events')); ?>">Events</a>
-                            </li>
+                            
                         <?php endif; ?>
                     </ul>
 

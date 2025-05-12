@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\PostAttachment;
 use App\Models\Society;
 use App\Models\Notification;
 use App\Models\Like;
@@ -10,6 +11,7 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\NotificationsController;
 
 class PostController extends Controller
 {
@@ -55,30 +57,71 @@ class PostController extends Controller
         return view('posts.index', compact('posts', 'societies'));
     }
 
-    public function user_post_create(Request $req){
-        try{
-            // dd($req->all());
-            if($user = Auth::user()){
+    public function user_post_create(Request $req)
+{
+    try {
+        // dd($req->all());
+        if ($user = Auth::user()) {
+            $req->validate([
+                'attachment.*' => 'file|max:20480|mimes:jpg,jpeg,png,mp4,mov,avi,doc,docx,pdf',
+            ]);
             $post = new Post();
             $post->user_id = $user->id;
             $post->society_id = $req->society_id;
             $post->content = $req->content;
-            if ($req->hasFile('attachment')) {
-                foreach ($req->file('attachment') as $file) {
-                    $fileName = time() . '_' . $file->getClientOriginalName();
-                    $destinationPath = public_path('images/post-images');
-                    $file->move($destinationPath, $fileName);
-                    $post->image = 'images/post-images/' . $fileName; // relative path to access via URL
-                }
-            }            
             $post->status = "active";
             $post->save();
+
+            if ($req->hasFile('attachment')) {
+                foreach ($req->file('attachment') as $file) {
+                    if ($file && $file->isValid()) {
+                    $mime = $file->getMimeType();
+                    $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $destinationPath = public_path('images/post-images');
+                    $file->move($destinationPath, $fileName);
+
+                    try{
+                    $type = 'document';
+                    if (str_starts_with($mime, 'image/')) {
+                        $type = 'image';
+                    } elseif (str_starts_with($mime, 'video/')) {
+                        $type = 'video';
+                    }
+                }catch(\Exception $e){
+                    return "here's the probelm";
+                }
+
+                    PostAttachment::create([
+                        'post_id' => $post->id,
+                        'file_path' => 'images/post-images/' . $fileName,
+                        'file_type' => $type,
+                    ]);
+                }
+            }
+            }
+
+            if($req->society_id){
+                $notifController = new NotificationsController();
+                $society = Society::findOrFail($req->society_id);
+                $content = $society->name +" just shared a post!";
+                $initiatorId = Auth::user()->id;
+                $userId = $req->society_id;
+                $notifController->send_post_notif($content, $userId, $initiatorId);
+            }
+
+            if(Auth::user()->role == "admin" || Auth::user()->role == "super-admin"){
+                $notifController = new NotificationsController();
+                $content = "Campus shared a post!";
+                $initiatorId = Auth::user()->id;
+                $userId = Auth::user()->id;
+                $notifController->send_post_notif($content, $userId, $initiatorId);
+            }
             return redirect()->route('home');
         }
-        }catch(\Exception $e){
-            return "There is an error: " . $e->getMessage();
-        }
+    } catch (\Exception $e) {
+        return "There is an error: " . $e->getMessage();
     }
+}
 
     public function toggleLike(Post $post)
 {
@@ -252,50 +295,60 @@ public function post_comment(Request $request)
      */
     public function update(Request $request, Post $post)
     {
-        // Check if the user is the post creator
         if (Auth::id() !== $post->user_id && !Auth::user()->isAdmin() && !Auth::user()->isSuperAdmin()) {
             return redirect()->route('home')
                 ->with('error', 'You do not have permission to edit this post.');
         }
-        
+    
         $request->validate([
             'content' => 'required|string',
             'society_id' => 'nullable|exists:societies,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'attachment.*' => 'nullable|file|max:51200', // 50MB max
         ]);
-
+    
         $user = Auth::user();
-        
-        // Check if user is a member of the society (if specified)
         if ($request->society_id) {
-            $society = Society::query()->where('id', $request->society_id)->first();
-            if (!$society || !$user->societies->contains($society->id)) {
-                return redirect()->route('posts.edit', $post)
-                    ->with('error', 'You can only post to societies you are a member of.');
+            if(Auth::user()->role == "user"){
+                return redirect()->route('home')
+                ->with('error', 'You do not have permission to edit this post.');
             }
         }
-        
+    
         $post->content = $request->content;
         $post->society_id = $request->society_id;
-
-            if ($request->hasFile('attachment')) {
-                // Delete old image if exists
-                if ($post->image) {
-                    Storage::disk('public')->delete($post->image);
-                }
-                foreach ($request->file('attachment') as $file) {
-                $imagePath = $file->store('post_images', 'public');
-                $post->image = $imagePath;
-                }
-            }
-            if(!$request->hasFile('attachment') && $post->image){
-                $post->image = "";
-            }
-        
         $post->save();
+    
+        if($request->removed_attachments > 0){
+            $post_attachment = PostAttachment::findOrFail($request->removed_attachments);
+            $post_attachment->delete();
+        }
+        // Handle new attachments
+        if ($request->hasFile('attachment')) {
+            foreach ($request->file('attachment') as $file) {
+                if ($file && $file->isValid()) {
+                    $mime = $file->getMimeType(); // fallback
+                    $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $destinationPath = public_path('images/post-images');
+                    $file->move($destinationPath, $fileName);
 
-        return redirect()->route('home', $post)
-            ->with('status', 'Post updated successfully!');
+                    $type = 'document';
+                    if (str_starts_with($mime, 'image/')) {
+                        $type = 'image';
+                    } elseif (str_starts_with($mime, 'video/')) {
+                        $type = 'video';
+                    }
+    
+                    // Save to PostAttachment
+                    PostAttachment::create([
+                        'post_id' => $post->id,
+                        'file_path' => 'images/post-images/' . $fileName,
+                        'file_type' => $type,
+                    ]);
+                }
+            }
+        }
+    
+        return back()->with('status', 'Post updated successfully!');
     }
 
     /**
@@ -321,7 +374,7 @@ public function post_comment(Request $request)
         
         // Delete post
         $post->delete();
-        return redirect()->route('home')
+        return back()
             ->with('status', 'Post deleted successfully!');
     }
     
