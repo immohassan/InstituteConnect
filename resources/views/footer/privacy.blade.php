@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Privacy Policy')
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
     <link rel="stylesheet" href="{{ asset('css/footer-pages.css') }}">
 @endpush
 @section('content')

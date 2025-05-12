@@ -87,7 +87,10 @@ public function likes()
     {
         return $this->likes->contains('user_id', $user->id);
     }
-    
+    public function attachments()
+{
+    return $this->hasMany(PostAttachment::class);
+}
     /**
      * Scope a query to only include posts from societies the user belongs to.
      *

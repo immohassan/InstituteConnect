@@ -94,3 +94,45 @@
     color: #d9d9d9;
     font-size: 12px;
   }
+
+  .carousel-control-prev-icon,
+.carousel-control-next-icon {
+    /* background-color: rgba(0, 0, 0, 0.5); dark semi-transparent bg */
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: auto; /* tighter fit */
+}
+
+.carousel-item img,
+.carousel-item video {
+    max-height: 400px;
+    object-fit: contain; /* preserves aspect ratio */
+}
+
+.carousel:hover .carousel-control-prev,
+.carousel:hover .carousel-control-next {
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    opacity: 0.6;
+}
+.create-post-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    transition: bottom 0.3s ease;
+}

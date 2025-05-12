@@ -1,6 +1,7 @@
 
 <?php $__env->startPush('styles'); ?>
 <link rel="stylesheet" href="<?php echo e(asset('css/auth.css')); ?>">
+<link rel="stylesheet" href="<?php echo e(asset('css/mobile.css')); ?>">
 <?php $__env->stopPush(); ?>
 <?php $__env->startSection('content'); ?>
 <div class="main-heading">Login</div>

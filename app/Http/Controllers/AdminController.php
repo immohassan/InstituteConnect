@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Society;
@@ -130,6 +132,12 @@ class AdminController extends Controller
 
 
     public function admin_portal_show(){
+        $user = Auth::user();
+        
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
         $users = User::all();
         return view('admin.portal', [
             'users' => $users
@@ -138,8 +146,12 @@ class AdminController extends Controller
 
     public function user_delete( Request $request){
         $user = User::findOrFail($request->id);
+        if(Auth::user()->role == "admin" || Auth::user()->role == "super-admin" || Auth::user()->role == "dev"){
         $user->delete();
         return back()->with('success', 'User deleted successfully');
+        }else{
+            return back()->with('fail', 'You are not authorized to do that');
+        }
     }
 
     public function user_update(Request $request){
@@ -148,5 +160,40 @@ class AdminController extends Controller
         $user->save();
 
         return back()->with('success', 'User updated successfully');
+    }
+
+    public function user_add(Request $request){
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:users',
+                function ($attribute, $value, $fail) {
+                    if (!str_ends_with($value, '@ibitpu.edu.pk')) {
+                        $fail('Only @ibitpu.edu.pk email addresses are allowed.');
+                    }
+                },
+            ],
+            'password' => [
+                'required',
+                'string',
+                Password::min(8)
+                    ->mixedCase()     // At least one uppercase and one lowercase letter
+                    ->letters()       // Must contain letters
+                    ->numbers()       // Must contain numbers
+                    ->symbols(),      // Must contain special characters
+            ],
+        ]);
+    
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role = strtolower($request->role);
+        $user->save();
+        return back()->with("success", "User added succesfully");
     }
 }

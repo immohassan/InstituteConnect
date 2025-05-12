@@ -1,7 +1,7 @@
 .body{
     color: black !important;
 }
-.main-section{
+.main-section-2{
     width: 700px;
     height: 100%;
     margin-top: 50px;
@@ -32,4 +32,18 @@
     color: white;
     box-shadow: none; /* Removes the default Bootstrap shadow */
     border-color: #797979; /* Keep border color consistent */
+}
+
+.create-post-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    transition: bottom 0.3s ease;
 }

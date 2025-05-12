@@ -25,12 +25,22 @@ class SocietyController extends Controller
 
     public function index()
     {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return redirect()->route('login');
+        }
         $societies = Society::with('users')->get();
         return view('society.index', compact('societies'));
     }
 
     public function show(Request $req)
     {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return redirect()->route('login');
+        }
         $user = Auth::user();
         $posts = Post::all();
         $society = Society::findOrFail($req->id);

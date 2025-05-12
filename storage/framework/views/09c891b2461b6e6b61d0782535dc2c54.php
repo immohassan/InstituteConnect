@@ -1,6 +1,7 @@
 
 <?php $__env->startPush('styles'); ?>
 <link rel="stylesheet" href="<?php echo e(asset('css/edit-profile.css')); ?>">
+<link rel="stylesheet" href="<?php echo e(asset('css/mobile.css')); ?>">
 <?php $__env->stopPush(); ?>
 <?php $__env->startSection('content'); ?>
 <div class="container">
@@ -151,58 +152,7 @@ unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
                         </div>
-
                         <hr>
-
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="changePassword" onclick="togglePasswordFields()">
-                                <label class="form-check-label" for="changePassword">
-                                    <?php echo e(__('Change Password')); ?>
-
-                                </label>
-                            </div>
-                        </div>
-
-                        <div id="passwordFields" style="display: none;">
-                            <div class="mb-3">
-                                <label for="password" class="form-label"><?php echo e(__('New Password')); ?></label>
-                                <input id="password" type="password" class="form-control <?php $__errorArgs = ['password'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" name="password" autocomplete="new-password">
-                                <?php $__errorArgs = ['password'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong><?php echo e($message); ?></strong>
-                                    </span>
-                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="password-confirm" class="form-label"><?php echo e(__('Confirm Password')); ?></label>
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" autocomplete="new-password">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary">
-                                    <?php echo e(__('Save Changes')); ?>
-
-                                </button>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
