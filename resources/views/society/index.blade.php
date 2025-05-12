@@ -2,6 +2,7 @@
 @section('title', 'Societies | Campus Connect')
 @push('styles')
 <link href="{{ asset('css/society.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 @endpush
 @section('content')
 <div class="main-heading">Societies</div>
@@ -11,7 +12,7 @@
         <!-- Banner -->
         <img src="{{ asset('images/' . $society->cover_image) }}" class="card-img-top" alt="Banner" style="height: 100px; object-fit: cover;">
         <!-- Profile picture -->
-        <img src="{{ asset('images/' . $society->logo) }}" class="rounded-circle position-absolute top-50 start-0 translate-middle-y ms-3 border border-3 border-dark" style="width: 64px; height: 64px; object-fit: cover;     margin-top: -10px;" alt="Profile">
+        <img src="{{ asset('images/' . $society->logo) }}" class="rounded-circle position-absolute top-50 start-0 translate-middle-y ms-3 border border-3 border-dark" style="width: 64px; height: 64px; object-fit: cover;     margin-top: -25px;" alt="Profile">
     
         <!-- Card Body -->
         <div class="card-body">

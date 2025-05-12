@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/edit-profile.css') }}">
+<link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 @endpush
 @section('content')
 <div class="container">

@@ -2,6 +2,7 @@
 @section('title', 'Terms of Service')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/footer-pages.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 @endpush
 @section('content')
     <div class="main-heading">Campus Connect Terms of Service</div>

@@ -2,6 +2,7 @@
 @section('title','Search | Campus Connect')
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/search.css') }}">
+<link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 @endpush
 @section('content')
 <div class="main-heading">Search</div>
@@ -35,8 +36,8 @@
         </div>
 
         @if(Auth::user()->id == $user->id)
-                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-light btn-sm px-4" style="text-decoration: none;">
-                        Edit Profile
+                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-light btn-sm px-4 edit_btn" style="text-decoration: none;">
+                        <span class="">Edit Profile</span>
                     </a>
                 @else
                     <button id="" 

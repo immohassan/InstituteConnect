@@ -2,6 +2,7 @@
 <?php $__env->startSection('title','Search | Campus Connect'); ?>
 <?php $__env->startPush('styles'); ?>
 <link rel="stylesheet" href="<?php echo e(asset('css/search.css')); ?>">
+<link rel="stylesheet" href="<?php echo e(asset('css/mobile.css')); ?>">
 <?php $__env->stopPush(); ?>
 <?php $__env->startSection('content'); ?>
 <div class="main-heading">Search</div>
@@ -35,8 +36,8 @@
         </div>
 
         <?php if(Auth::user()->id == $user->id): ?>
-                    <a href="<?php echo e(route('profile.edit')); ?>" class="btn btn-outline-light btn-sm px-4" style="text-decoration: none;">
-                        Edit Profile
+                    <a href="<?php echo e(route('profile.edit')); ?>" class="btn btn-outline-light btn-sm px-4 edit_btn" style="text-decoration: none;">
+                        <span class="">Edit Profile</span>
                     </a>
                 <?php else: ?>
                     <button id="" 
